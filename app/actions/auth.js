@@ -1,34 +1,33 @@
-import { firebaseAuth, googleProvider } from '../database';
+import {firebaseAuth, googleProvider} from "../database/config";
 
-import {
-  LOGIN_SUCCESS,
-  LOGOUT,
-  LOGIN_REQUEST,
-  LOGIN_FAILURE,
-} from './types';
-import { openSnackbar } from './snackbar';
+export function loginWithGoogle() {
+    return firebaseAuth().signInWithRedirect(googleProvider);
+}
 
-const loginRequest = () => ({ type: LOGIN_REQUEST });
-const loginSuccess = payload => ({ type: LOGIN_SUCCESS, payload });
-const loginFailure = error => ({ type: LOGIN_FAILURE, error });
 
-export function login() {
-  return async dispatch => {
-    dispatch(loginRequest());
-    try {
-      const result = await firebaseAuth().signInWithPopup(googleProvider);
-      dispatch(loginSuccess(result));
-      dispatch(openSnackbar({ message: `Hello, ${result.user.displayName}` }));
-    } catch (error) {
-      dispatch(loginFailure(error));
-    }
-  };
+function authenticate(promise) {
+    console.log("authenticate");
+    return promise
+        .then(function (result) {
+            var token = result.credential.accessToken;
+            var user = result.user;
+            console.log("login happened with firebase, ", JSON.stringify(user));
+            localStorage.setItem("firebaseUser", JSON.stringify(result));
+            return Promise.resolve(result);
+        }).catch(function(error){
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            var email = error.email;
+            var credential = error.credential;
+            alert("failed firebase login" + error);
+            return Promise.reject("err");
+        });
+}
+
+function loginWithFirebase(provider) {
+    return firebaseAuth().signInWithRedirect(provider);
 }
 
 export function logout() {
-  firebaseAuth().signOut();
-  return dispatch => {
-    dispatch({ type: LOGOUT });
-    dispatch(openSnackbar({ message: 'Signout success!' }));
-  };
+    return firebaseAuth().signOut();
 }

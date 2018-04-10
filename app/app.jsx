@@ -3,7 +3,7 @@ var ReactDOM = require('react-dom');
 var {BrowserRouter} = require('react-router-dom');
 var App = require('App');
 
-require('style-loader!css-loader!sass-loader!applicationStyle');
+require('applicationStyle');
 
 
 ReactDOM.render(

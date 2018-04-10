@@ -28,7 +28,8 @@ module.exports = {
       Main: 'app/components/Main.jsx',
       Sort: 'app/components/Sort.jsx',
       BST: 'app/components/BST.jsx',
-      App: 'app/components/App.jsx'
+      App: 'app/components/App.jsx',
+      AuthModal: 'app/components/AuthModal.jsx'
     },
     extensions: ['*', '.js', '.jsx']
   },
