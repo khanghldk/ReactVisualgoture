@@ -1,5 +1,6 @@
 var React = require('react');
 var createReactClass = require('create-react-class');
+
 var { Link, IndexLink } = require('react-router-dom');
 
 var { Navbar, Nav, NavItem, FormGroup, FormControl, Button, NavDropdown, MenuItem } = require('react-bootstrap');
@@ -45,11 +46,11 @@ var AppNav = createReactClass({
                 return (
                     <Nav pullRight>
                         <NavDropdown title={user.displayName} id="nav-dropdown">
+                            <MenuItem>Profile</MenuItem>
                             <MenuItem onClick={this.handleLogout}>Log out</MenuItem>
                         </NavDropdown>
                     </Nav>
                 )
-
             } else {
                 return (
                     <Nav pullRight>
@@ -76,7 +77,7 @@ var AppNav = createReactClass({
                 <Navbar fluid inverse collapseOnSelect>
                     <Navbar.Header>
                         <Navbar.Brand>
-                            <a href="#home">Algorithms Visualizer</a>
+                            <Link to="/">Algorithms Visualizer</Link>
                         </Navbar.Brand>
                         <Navbar.Toggle />
                     </Navbar.Header>

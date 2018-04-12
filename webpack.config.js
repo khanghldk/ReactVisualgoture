@@ -1,5 +1,6 @@
 var webpack = require('webpack');
 var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: [
@@ -10,15 +11,22 @@ module.exports = {
     jquery: 'jQuery',
     foundation: 'foundation-sites'
   },
+  devServer: {
+    historyApiFallback: true,
+  },
   plugins: [
     new webpack.ProvidePlugin({
       '$': 'jquery',
       'jQuery': 'jquery'
+    }),
+    new HtmlWebpackPlugin({
+      template: 'public/index.html'
     })
   ],
   output: {
     path: __dirname,
-    filename: './public/bundle.js'
+    filename: './public/bundle.js',
+    publicPath: '/'
   },
   resolve: {
     modules: [__dirname, 'node_modules'],
@@ -29,7 +37,11 @@ module.exports = {
       Sort: 'app/components/Sort.jsx',
       BST: 'app/components/BST.jsx',
       App: 'app/components/App.jsx',
-      AuthModal: 'app/components/AuthModal.jsx'
+      AuthModal: 'app/components/AuthModal.jsx',
+      Intro: 'app/components/Intro.jsx',
+      Home: 'app/components/Home.jsx',
+      SideNav: 'app/components/SideNav.jsx',
+      ExpandedGroup: 'app/components/ExpandedGroup.jsx'
     },
     extensions: ['*', '.js', '.jsx']
   },
@@ -43,10 +55,6 @@ module.exports = {
           },
         ],
         exclude: /(node_modules|bower_components)/
-      },
-      {
-        test: /\.exec\.js$/,
-        use: ['script-loader']
       },
       {
         test: /\.scss$/,
