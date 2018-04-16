@@ -7,7 +7,7 @@ const INITIAL_STATE = {
     loading: false,
 }
 
-export function googleAuth(state = INITIAL_STATE, action) {
+export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case userConstants.LOGIN_REQUEST:
             return {

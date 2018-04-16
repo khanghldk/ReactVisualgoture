@@ -32,23 +32,11 @@ class AppNav extends React.Component {
         this.setState({
             show: false
         })
-        // this.props.googleAuthActions.logout();
     }
-
-    // componentWillReceiveProps() {
-    //     console.log('xxx');
-    //     var {googleAuth} = this.props;
-    //     console.log(googleAuth.loggedIn);
-    //     if (googleAuth.loggedIn) {
-    //         this.setState({
-    //             show: false
-    //         })
-    //     }
-    // }
 
     render() {
         let { show } = this.state;
-        var { googleAuth } = this.props;
+        var { googleAuth, app } = this.props;
 
         return (
             <div>
@@ -56,7 +44,7 @@ class AppNav extends React.Component {
                     <Navbar.Header>
                         <Navbar.Brand>
                             {/* <Link to="/"> */}
-                            Algorithms Visualizer
+                            {app.appName}
                             {/* </Link> */}
                         </Navbar.Brand>
                         <Navbar.Toggle />
@@ -93,6 +81,7 @@ class AppNav extends React.Component {
 }
 
 export default (connect(state => ({
+    app: state.app,
     googleAuth: state.googleAuth,
 }),
     {

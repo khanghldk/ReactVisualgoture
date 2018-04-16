@@ -2,7 +2,7 @@ var React = require('react');
 var { render } = require('react-dom');
 var { Provider } = require('react-redux');
 
-var { store } = require('./helpers');
+var { store } = require('./store');
 
 var AppNav = require('./components/AppNav');
 

@@ -1,15 +1,17 @@
-import { combineReducers } from 'redux';
+import alert from './alert';
+import googleAuth from './googleAuth';
+import app from './app';
 
-import { alert } from './alert.reducer';
+// export default function () {
+//   return (
+//     app,
+//     alert,
+//     googleAuth
+//   )
+// };
 
-import { googleAuth } from './googleAuth';
-
-import { app } from './app';
-
-const rootReducer = combineReducers({
+export default {
   app,
   alert,
-  googleAuth
-});
-
-export default rootReducer;
+  googleAuth,
+};

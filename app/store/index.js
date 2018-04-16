@@ -1,28 +1,35 @@
 import { createStore, applyMiddleware } from 'redux';
 import { persistCombineReducers } from 'redux-persist';
 import storage from 'redux-persist/es/storage';
-import thunk from 'redux-thunk';
-
+import thunkMiddleware from 'redux-thunk';
+import { createLogger } from 'redux-logger';
 import reducers from '../reducers';
+import { composeWithDevTools } from 'redux-devtools-extension';
+
+
+const loggerMiddleware = createLogger();
 
 const config = {
-  key: 'root',
-  storage,
-  whitelist: [
-    'app',
-    'auth',
-    'crawl',
-  ],
+    key: 'root',
+    storage,
+    whitelist: [
+        'app',
+        'alert',
+        'googleAuth',
+    ],
 };
 
-const reducer = persistCombineReducers(config, reducers);
+console.log(reducers);
 
-const store = createStore(
-  reducer,
-  {},
-  composeWithDevTools(
-    applyMiddleware(thunk),
-  )
+const reducer = persistCombineReducers(config, {root: reducers});
+
+export const store = createStore(
+    reducer,
+    {},
+    composeWithDevTools(
+        applyMiddleware(
+            thunkMiddleware,
+            loggerMiddleware,
+        ),
+    )
 );
-
-export default store;
