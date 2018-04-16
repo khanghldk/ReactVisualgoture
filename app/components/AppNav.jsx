@@ -1,83 +1,63 @@
-var React = require('react');
-var createReactClass = require('create-react-class');
+import React from 'react';
+import { connect } from 'react-redux';
 
 var { Link, IndexLink } = require('react-router-dom');
 
 var { Navbar, Nav, NavItem, FormGroup, FormControl, Button, NavDropdown, MenuItem } = require('react-bootstrap');
 
-var AuthModal = require('AuthModal');
+import AuthModal from './AuthModal';
 const appTokenKey = "appToken";
 
-import { logout } from "../actions/auth";
+import { logout } from '../actions/googleAuthActions';
 
-var AppNav = createReactClass({
-    getInitialState: function () {
-        var userFirebase = localStorage.getItem(appTokenKey);
-        if (userFirebase) {
-            return {
-                show: false,
-                status: "login",
-                user: userFirebase
-            }
-        } else {
-            return {
-                show: false,
-                status: "logout",
-                user: undefined
-            }
-        }
-    },
-    handleLogin: function () {
-        this.setState({ show: true });
-    },
-    handleLogout: function () {
-        logout();
-        //localStorage.removeItem(appTokenKey);
+class AppNav extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            show: false,
+        };
+
+        this.handleLogin = this.handleLogin.bind(this);
+        this.handleLogout = this.handleLogout.bind(this);
+    }
+    handleLogin() {
         this.setState({
-            status: "logout",
-            user: undefined
+            show: true
         })
-    },
-    render: function () {
-        var { show, status, user } = this.state;
-        var renderLoginButton = () => {
-            if (status === "login") {
-                user = JSON.parse(user);
-                return (
-                    <Nav pullRight>
-                        <NavDropdown title={user.displayName} id="nav-dropdown">
-                            <MenuItem>Profile</MenuItem>
-                            <MenuItem onClick={this.handleLogout}>Log out</MenuItem>
-                        </NavDropdown>
-                    </Nav>
-                )
-            } else {
-                return (
-                    <Nav pullRight>
-                        <NavItem onClick={this.handleLogin}>
-                            Log in
-                        </NavItem>
-                        <NavItem>
-                            Sign up
-                        </NavItem>
-                    </Nav>
-                )
-            }
-        }
+    }
 
-        function renderLogin() {
-            if (show) {
-                return (
-                    <AuthModal show={show} />
-                )
-            }
-        }
+    handleLogout() {
+        this.props.logout();
+        this.setState({
+            show: false
+        })
+        // this.props.googleAuthActions.logout();
+    }
+
+    // componentWillReceiveProps() {
+    //     console.log('xxx');
+    //     var {googleAuth} = this.props;
+    //     console.log(googleAuth.loggedIn);
+    //     if (googleAuth.loggedIn) {
+    //         this.setState({
+    //             show: false
+    //         })
+    //     }
+    // }
+
+    render() {
+        let { show } = this.state;
+        var { googleAuth } = this.props;
+
         return (
             <div>
-                <Navbar fluid inverse collapseOnSelect>
+                <Navbar fluid inverse collapseOnSelect fixedTop>
                     <Navbar.Header>
                         <Navbar.Brand>
-                            <Link to="/">Algorithms Visualizer</Link>
+                            {/* <Link to="/"> */}
+                            Algorithms Visualizer
+                            {/* </Link> */}
                         </Navbar.Brand>
                         <Navbar.Toggle />
                     </Navbar.Header>
@@ -88,13 +68,33 @@ var AppNav = createReactClass({
                             </FormGroup>{' '}
                             <Button type="submit">Submit</Button>
                         </Navbar.Form>
-                        {renderLoginButton()}
+                        {googleAuth.loggedIn &&
+                            <Nav pullRight>
+                                <NavDropdown title={googleAuth.user.displayName} id="nav-dropdown">
+                                    <MenuItem>Profile</MenuItem>
+                                    <MenuItem onClick={this.handleLogout}>Log out</MenuItem>
+                                </NavDropdown>
+                            </Nav>}
+                        {!googleAuth.loggedIn &&
+                            <Nav pullRight>
+                                <NavItem onClick={this.handleLogin}>
+                                    Log in
+                            </NavItem>
+                                <NavItem>
+                                    Sign up
+                            </NavItem>
+                            </Nav>}
                     </Navbar.Collapse>
                 </Navbar>
-                {renderLogin()}
+                <AuthModal show={show && !googleAuth.loggedIn} />
             </div>
         );
     }
-});
+}
 
-module.exports = AppNav;
+export default (connect(state => ({
+    googleAuth: state.googleAuth,
+}),
+    {
+        logout
+    })(AppNav));

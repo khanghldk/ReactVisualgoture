@@ -1,4 +1,7 @@
-var React = require('react');
+import React from 'react';
+
+import { connect } from 'react-redux';
+
 var createReactClass = require('create-react-class');
 
 var { Popover, Tooltip, Button, Modal, OverlayTrigger, Label, Form, FormGroup, FormControl, Col, ControlLabel } = require('react-bootstrap');
@@ -7,31 +10,41 @@ import { loginWithGoogle } from "../actions/auth";
 import { firebaseAuth } from "../database/config";
 import { Redirect } from 'react-router-dom';
 
+import { login } from '../actions/googleAuthActions';
+
 const firebaseAuthKey = "firebaseAuthInProgress";
 const appTokenKey = "appToken";
 
-var AuthModal = createReactClass({
-    getInitialState: function () {
-        return {
-            show: true,
+class AuthModal extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            show: props.show,
             type: "login",
             email: "",
             password: "",
             passwordConfirm: ""
-        }
-    },
-    componentWillReceiveProps: function (newProps) {
+        };
+        this.handleClose = this.handleClose.bind(this);
+        this.handleType = this.handleType.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        // this.handleGoogleLogin = this.handleGoogleLogin.bind(this);
+    };
+    componentWillReceiveProps(newProps) {
         this.setState({
             show: newProps.show
         })
-    },
-    handleClose: function () {
+    };
+    // handleLoginWithGoogle = () => {
+    //     this.props.login();
+    // };
+    handleClose() {
         this.setState({
             show: false,
             type: "login"
         });
-    },
-    handleType: function () {
+    };
+    handleType() {
         var { type } = this.state;
         if (type === "login") {
             this.setState({
@@ -42,8 +55,8 @@ var AuthModal = createReactClass({
                 type: "login"
             })
         }
-    },
-    handleSubmit: function (e) {
+    };
+    handleSubmit(e) {
         e.preventDefault();
         var { type, email, password, passwordConfirm } = this.state;
 
@@ -55,30 +68,23 @@ var AuthModal = createReactClass({
         } else {
             passwordConfirm = this.passwordConfirm.value;
         }
-    },
-    handleGoogleLogin: function () {
-        loginWithGoogle()
-            .catch(function (error) {
-                alert(error); // or show toast
-                localStorage.removeItem(firebaseAuthKey);
-            });
-        localStorage.setItem(firebaseAuthKey, "1");
-    },
-    componentWillMount: function () {
+    };
+    componentWillMount() {
         var user = firebaseAuth().currentUser;
-
         if (user) {
             localStorage.removeItem(firebaseAuthKey);
             localStorage.setItem(appTokenKey, JSON.stringify(user));
             <Redirect to="/" />
         }
-    },
-    render: function () {
+    };
+    render() {
         var { show, type } = this.state;
 
-        var renderModal = () => {
-            if (type === "login") {
-                return (
+        let loginType = (type === 'login');
+
+        return (
+            <div>
+                {loginType &&
                     <Modal show={show} onHide={this.handleClose}>
                         <Modal.Header closeButton>
                             <Modal.Title> Log in </Modal.Title>
@@ -91,16 +97,16 @@ var AuthModal = createReactClass({
                                             bsStyle="danger"
                                             bsSize="large"
                                             block
-                                            onClick={this.handleGoogleLogin}>
+                                            onClick={this.props.login}>
                                             Continue with Google
-                                        </Button>
+                                </Button>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup controlId="formHorizontalEmail">
                                     <Col smOffset={1} sm={10}>
                                         <ControlLabel>
                                             Email
-                                    </ControlLabel>
+                            </ControlLabel>
                                         <FormControl
                                             type="email"
                                             placeholder="Email"
@@ -111,7 +117,7 @@ var AuthModal = createReactClass({
                                     <Col smOffset={1} sm={10}>
                                         <ControlLabel>
                                             Password
-                                    </ControlLabel>
+                            </ControlLabel>
                                         <FormControl
                                             type="password"
                                             placeholder="Password"
@@ -127,15 +133,13 @@ var AuthModal = createReactClass({
                                     <Col smOffset={1} sm={10}>
                                         <Button bsStyle="link" bsSize="large" block onClick={this.handleType}>
                                             Create an account
-                                    </Button>
+                            </Button>
                                     </Col>
                                 </FormGroup>
                             </Form>
                         </Modal.Body>
-                    </Modal>
-                )
-            } else {
-                return (
+                    </Modal>}
+                {!loginType &&
                     <Modal show={show} onHide={this.handleClose}>
                         <Modal.Header closeButton>
                             <Modal.Title> Sign up </Modal.Title>
@@ -151,7 +155,7 @@ var AuthModal = createReactClass({
                                     <Col smOffset={1} sm={10}>
                                         <ControlLabel>
                                             Email
-                                    </ControlLabel>
+                                </ControlLabel>
                                         <FormControl
                                             type="email"
                                             placeholder="Email"
@@ -162,7 +166,7 @@ var AuthModal = createReactClass({
                                     <Col smOffset={1} sm={10}>
                                         <ControlLabel>
                                             Password
-                                    </ControlLabel>
+                                </ControlLabel>
                                         <FormControl
                                             type="password"
                                             placeholder="Password"
@@ -173,7 +177,7 @@ var AuthModal = createReactClass({
                                     <Col smOffset={1} sm={10}>
                                         <ControlLabel>
                                             Confirm Password
-                                    </ControlLabel>
+                                </ControlLabel>
                                         <FormControl
                                             type="passwordConfirm"
                                             placeholder="Confirm Password"
@@ -189,22 +193,33 @@ var AuthModal = createReactClass({
                                     <Col smOffset={1} sm={10}>
                                         <Button bsStyle="link" bsSize="large" block onClick={this.handleType}>
                                             Already have an account?
-                                    </Button>
+                                </Button>
                                     </Col>
                                 </FormGroup>
                             </Form>
                         </Modal.Body>
-                    </Modal>
-                )
-            }
-        }
-
-        return (
-            <div>
-                {renderModal()}
+                    </Modal>}
             </div>
-        );
-    }
-});
+        )
+    };
+}
 
-module.exports = AuthModal;
+// export { AuthModal_ as AuthModal };
+
+// function mapStateToProps(state) {
+//     const { googleAuth } = state;
+//     return {
+//         googleAuth
+//     };
+// }
+
+// const connectedAuthModal = connect(mapStateToProps)(AuthModal);
+
+// export { connectedAuthModal as AuthModal };
+
+export default (connect(state => ({
+    googleAuth: state.googleAuth,
+}),
+    {
+        login
+    })(AuthModal));

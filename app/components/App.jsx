@@ -1,19 +1,49 @@
-var React = require('react');
-var createReactClass = require('create-react-class');
+import React from 'react';
+import { Router, Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-var AppNav = require('AppNav');
-var Main = require('Main');
+import { history } from '../helpers';
+import { alertActions } from '../actions';
 
+var Sort = require('Sort');
+var BST = require('BST');
+var Home = require('Home');
+import AppNav from './AppNav';
 
-var App = createReactClass({
-  render: function () {
-    return (
-      <div>
-        <AppNav/>
-        <Main/>
-      </div>
-    )
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    const { dispatch } = this.props;
+    history.listen((location, action) => {
+      dispatch(alertActions.clear());
+    });
   }
-});
 
-module.exports = App;
+  render() {
+    const { alert } = this.props;
+    return (
+      <div className="container">
+        <AppNav />
+        <Router history={history}>
+          <div>
+            <Route exact path='/' component={Home} />
+            <Route path='/sort' component={Sort} />
+            <Route path='/BST' component={BST} />
+          </div>
+        </Router>
+      </div>
+
+    );
+  }
+}
+
+function mapStateToProps(state) {
+  const { alert, app } = state;
+  return {
+    alert
+  };
+}
+
+const connectedApp = connect(mapStateToProps)(App);
+export { connectedApp as App };

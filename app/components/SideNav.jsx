@@ -19,13 +19,16 @@ var SideNav = createReactClass({
         }
 
         var renderContent = (item) => {
+            var link = "#" + item.replace(/ /g,'');
             return (
-                <ListGroupItem>{item}</ListGroupItem>
+                <ListGroupItem>
+                    <a href={link}>{item}</a>
+                </ListGroupItem>
             )
         }
 
         return (
-            <div>
+            <div className="sideNav">
                 <h4>{title}</h4>
                 <ListGroup>
                     {renderContents()}

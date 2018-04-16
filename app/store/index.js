@@ -1,7 +1,6 @@
 import { createStore, applyMiddleware } from 'redux';
 import { persistCombineReducers } from 'redux-persist';
 import storage from 'redux-persist/es/storage';
-import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 
 import reducers from '../reducers';
@@ -12,6 +11,7 @@ const config = {
   whitelist: [
     'app',
     'auth',
+    'crawl',
   ],
 };
 

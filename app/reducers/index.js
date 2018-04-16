@@ -1,9 +1,15 @@
-import app from './app';
-import auth from './auth';
-import snackbar from './snackbar';
+import { combineReducers } from 'redux';
 
-export default {
+import { alert } from './alert.reducer';
+
+import { googleAuth } from './googleAuth';
+
+import { app } from './app';
+
+const rootReducer = combineReducers({
   app,
-  auth,
-  snackbar,
-};
+  alert,
+  googleAuth
+});
+
+export default rootReducer;

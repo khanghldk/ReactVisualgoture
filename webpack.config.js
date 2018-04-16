@@ -5,7 +5,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: [
     'script-loader!jquery/dist/jquery.min.js',
-    './app/app.jsx'
+    './app/index.jsx'
   ],
   externals: {
     jquery: 'jQuery',
@@ -41,7 +41,11 @@ module.exports = {
       Intro: 'app/components/Intro.jsx',
       Home: 'app/components/Home.jsx',
       SideNav: 'app/components/SideNav.jsx',
-      ExpandedGroup: 'app/components/ExpandedGroup.jsx'
+      ExpandedGroup: 'app/components/ExpandedGroup.jsx',
+      Course: 'app/components/Course.jsx',
+      SubLesson: 'app/components/SubLesson.jsx',
+      Content: 'app/components/Content.jsx',
+      SortRoute: 'app/components/SortRoute.jsx'
     },
     extensions: ['*', '.js', '.jsx']
   },
@@ -68,5 +72,7 @@ module.exports = {
       }
     ]
   },
-  devtool: 'cheap-module-eval-source-map'
+  devServer: {
+    historyApiFallback: true
+  }
 };
