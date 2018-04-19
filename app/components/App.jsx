@@ -1,14 +1,14 @@
 import React from 'react';
-import { Router, Route } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { history } from '../helpers';
 import { alertActions } from '../actions';
 
-var Sort = require('Sort');
-var BST = require('BST');
-var Home = require('Home');
+import Home from './Home';
 import AppNav from './AppNav';
+
+import Course from './Course';
 
 class App extends React.Component {
   constructor(props) {
@@ -19,17 +19,16 @@ class App extends React.Component {
       dispatch(alertActions.clear());
     });
   }
-
   render() {
     const { alert } = this.props;
     return (
       <div className="container">
-        <AppNav />
         <Router history={history}>
           <div>
+            <AppNav />
             <Route exact path='/' component={Home} />
-            <Route path='/sort' component={Sort} />
-            <Route path='/BST' component={BST} />
+            <Route path='/basic-course/:courseName' component={Course} />
+            <Route path='/advanced-course/:courseName' component={Course} />
           </div>
         </Router>
       </div>

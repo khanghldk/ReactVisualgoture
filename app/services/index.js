@@ -1,1 +1,4 @@
 export * from './user.service';
+export * from './course.service';
+export * from './lesson.service';
+export * from './subLesson.service';

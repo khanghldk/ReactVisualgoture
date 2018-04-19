@@ -1,10 +1,10 @@
 const INITIAL_STATE = {
-    appName: 'Algorithms Visualizer',
+  appName: 'Algorithms Visualizer',
 };
 
 export default (state = INITIAL_STATE, action) => {
-    switch (action.type) {
-      default:
-        return state;
-    }
-  };
+  switch (action.type) {
+    default:
+      return state;
+  }
+};

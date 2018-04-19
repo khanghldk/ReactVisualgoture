@@ -2,8 +2,8 @@ import { userConstants } from '../constants';
 
 const INITIAL_STATE = {
     loggedIn: false,
-    token: null,
-    user: null,
+    uid: null,
+    displayName: null,
     loading: false,
 }
 
@@ -15,12 +15,12 @@ export default (state = INITIAL_STATE, action) => {
                 loading: true,
                 error: null,
             };
-        case userConstants.LOGIN_SUCCESS:
+        case userConstants.LOGIN_GOOGLE_SUCCESS:
             return {
                 ...state,
                 loggedIn: true,
-                token: action.payload.credential.accessToken,
-                user: action.payload.user,
+                uid: action.payload.uid,
+                displayName: action.payload.displayName,
                 loading: false,
             };
         case userConstants.LOGIN_FAILURE:

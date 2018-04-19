@@ -7,52 +7,48 @@ var createReactClass = require('create-react-class');
 var { Popover, Tooltip, Button, Modal, OverlayTrigger, Label, Form, FormGroup, FormControl, Col, ControlLabel } = require('react-bootstrap');
 
 import { loginWithGoogle } from "../actions/auth";
-import { firebaseAuth } from "../database/config";
-import { Redirect } from 'react-router-dom';
 
 import { login } from '../actions/googleAuthActions';
 
-const firebaseAuthKey = "firebaseAuthInProgress";
-const appTokenKey = "appToken";
+import { loginDefault } from '../actions/defaultAuth';
+
 
 class AuthModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             show: props.show,
-            type: "login",
-            email: "",
-            password: "",
-            passwordConfirm: ""
+            type: props.type,
+            email: '',
+            password: '',
+            passwordConfirm: ''
         };
         this.handleClose = this.handleClose.bind(this);
         this.handleType = this.handleType.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        // this.handleGoogleLogin = this.handleGoogleLogin.bind(this);
     };
     componentWillReceiveProps(newProps) {
         this.setState({
-            show: newProps.show
+            show: newProps.show,
+            type: newProps.type
         })
     };
-    // handleLoginWithGoogle = () => {
-    //     this.props.login();
-    // };
     handleClose() {
         this.setState({
             show: false,
-            type: "login"
+            type: 'login'
         });
+        this.props.handler(false);
     };
     handleType() {
         var { type } = this.state;
-        if (type === "login") {
+        if (type === 'login') {
             this.setState({
-                type: "create"
+                type: 'signup'
             })
         } else {
             this.setState({
-                type: "login"
+                type: 'login'
             })
         }
     };
@@ -63,20 +59,27 @@ class AuthModal extends React.Component {
         email = this.email.value;
         password = this.password.value;
 
-        if (type === "login") {
+        if (type === 'login') {
 
         } else {
             passwordConfirm = this.passwordConfirm.value;
         }
     };
-    componentWillMount() {
-        var user = firebaseAuth().currentUser;
-        if (user) {
-            localStorage.removeItem(firebaseAuthKey);
-            localStorage.setItem(appTokenKey, JSON.stringify(user));
-            <Redirect to="/" />
-        }
-    };
+    handleLoginDefault = (e) => {
+        e.preventDefault();
+        var { email, password } = this.state;
+        this.props.loginDefault(email, password, null);
+    }
+    handleEmailChange = (e) => {
+        this.setState({
+            email: e.target.value
+        })
+    }
+    handlePasswordChange = (e) => {
+        this.setState({
+            password: e.target.value
+        })
+    }
     render() {
         var { show, type } = this.state;
 
@@ -85,7 +88,7 @@ class AuthModal extends React.Component {
         return (
             <div>
                 {loginType &&
-                    <Modal show={show} onHide={this.handleClose}>
+                    <Modal show={this.state.show} onHide={this.handleClose}>
                         <Modal.Header closeButton>
                             <Modal.Title> Log in </Modal.Title>
                         </Modal.Header>
@@ -99,41 +102,48 @@ class AuthModal extends React.Component {
                                             block
                                             onClick={this.props.login}>
                                             Continue with Google
-                                </Button>
+                                        </Button>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup controlId="formHorizontalEmail">
                                     <Col smOffset={1} sm={10}>
                                         <ControlLabel>
                                             Email
-                            </ControlLabel>
+                                        </ControlLabel>
                                         <FormControl
                                             type="email"
                                             placeholder="Email"
-                                            inputRef={ref => { this.email = ref; }} />
+                                            value = {this.state.email}
+                                            onChange = {this.handleEmailChange} />
                                     </Col>
                                 </FormGroup>
                                 <FormGroup controlId="formHorizontalPassword">
                                     <Col smOffset={1} sm={10}>
                                         <ControlLabel>
                                             Password
-                            </ControlLabel>
+                                        </ControlLabel>
                                         <FormControl
                                             type="password"
                                             placeholder="Password"
-                                            inputRef={ref => { this.password = ref; }} />
+                                            value = {this.state.password}
+                                            onChange = {this.handlePasswordChange} />
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
                                     <Col smOffset={1} sm={10}>
-                                        <Button bsStyle="info" bsSize="large" block type="submit">Log in</Button>
+                                        <Button bsStyle="info" 
+                                                bsSize="large" 
+                                                block type="submit"
+                                                onClick={this.handleLoginDefault}>
+                                            Log in
+                                        </Button>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
                                     <Col smOffset={1} sm={10}>
                                         <Button bsStyle="link" bsSize="large" block onClick={this.handleType}>
                                             Create an account
-                            </Button>
+                                        </Button>
                                     </Col>
                                 </FormGroup>
                             </Form>
@@ -204,22 +214,10 @@ class AuthModal extends React.Component {
     };
 }
 
-// export { AuthModal_ as AuthModal };
-
-// function mapStateToProps(state) {
-//     const { googleAuth } = state;
-//     return {
-//         googleAuth
-//     };
-// }
-
-// const connectedAuthModal = connect(mapStateToProps)(AuthModal);
-
-// export { connectedAuthModal as AuthModal };
-
 export default (connect(state => ({
     googleAuth: state.googleAuth,
 }),
     {
-        login
+        login,
+        loginDefault,
     })(AuthModal));

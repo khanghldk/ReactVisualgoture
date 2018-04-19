@@ -6,12 +6,12 @@ var { ListGroup, ListGroupItem, Button, Col, Row, Button } = require('react-boot
 var { Link } = require('react-router-dom');
 
 var ExpandedGroup = createReactClass({
-    getInitialState: function() {
+    getInitialState: function () {
         return {
             open: false
         }
     },
-    handleOnClick: function() {
+    handleOnClick: function () {
         var x = !this.state.open;
         this.setState({
             open: x
@@ -24,30 +24,31 @@ var ExpandedGroup = createReactClass({
 
             var result = [];
 
-            data.map(item => {
-                result.push(renderContent(item));
-            });
+            for (var content in data) {
+                result.push(renderContent(data[content].uid, data[content].name));
+            }
+
+            // data.map(item => {
+            //     result.push(renderContent(item));
+            // });
 
             return result;
         }
 
-        var renderContent = (item) => {
+        var renderContent = (num, item) => {
             return (
-                <ListGroupItem>{item}</ListGroupItem>
+                <ListGroupItem key={num}>{item}</ListGroupItem>
             )
         }
-        var link = title.replace(/ /g,'');
+        var link = title.replace(/ /g, '-');
         var pathName = window.location.pathname + "/" + link;
-
-        console.log(pathName);
-
         return (
             <div>
                 <Row>
-                    <Col md={9} xs={9}>
+                    <Col md={10} xs={10}>
                         <a onClick={this.handleOnClick} className="groupControl" name={link}>{title}</a>
                     </Col>
-                    <Col md={3} xs={3}>
+                    <Col md={2} xs={2}>
                         <Button>
                             <Link to={pathName}>
                                 Go

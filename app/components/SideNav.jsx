@@ -11,18 +11,18 @@ var SideNav = createReactClass({
 
             var result = [];
 
-            contents.map(item => {
-                result.push(renderContent(item));
-            });
+            for (var content in contents) {
+                result.push(renderContent(contents[content]));
+            }
 
             return result;
         }
 
         var renderContent = (item) => {
-            var link = "#" + item.replace(/ /g,'');
+            var link = "#" + item.name.replace(/ /g, '-');
             return (
-                <ListGroupItem>
-                    <a href={link}>{item}</a>
+                <ListGroupItem key={item.uid}>
+                    <a href={link}>{item.name}</a>
                 </ListGroupItem>
             )
         }

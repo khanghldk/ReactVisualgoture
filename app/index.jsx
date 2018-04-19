@@ -1,20 +1,24 @@
-var React = require('react');
-var { render } = require('react-dom');
-var { Provider } = require('react-redux');
-// import { PersistGate } from 'redux-persist/es/integration/react';
-var { store } = require('./store');
+import React from 'react';
+import { render } from 'react-dom';
+import { Provider } from 'react-redux';
 
-var AppNav = require('./components/AppNav');
+import store from './store';
+
+import AppNav from './components/AppNav';
 
 import { App } from './components';
 
-require('applicationStyle');
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/es/integration/react';
+import CircularProgress from 'material-ui/CircularProgress';
 
-console.log(store);
+require('applicationStyle');
 
 render(
   <Provider store={store}>
-    <App />
+    <PersistGate  persistor={persistStore(store)}>
+      <App />
+    </PersistGate>
   </Provider>,
   document.getElementById('app')
 );

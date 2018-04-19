@@ -1,6 +1,11 @@
 import { alertConstants } from '../constants';
 
-export default (state = {}, action) => {
+const INITIAL_STATE = {
+  type: '',
+  message: ''
+};
+
+export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case alertConstants.SUCCESS:
       return {
@@ -15,6 +20,6 @@ export default (state = {}, action) => {
     case alertConstants.CLEAR:
       return {};
     default:
-      return state
+      return state;
   }
-}
+};
