@@ -1,23 +1,9 @@
-var React = require('react');
-var createReactClass = require('create-react-class');
+import React from 'react';
 
-var Content = createReactClass({
-    render: function() {
-        var {title, contents} = this.props;
-
-        var renderContents = () => {
-            contents.map(content => 
-                <p>{content}</p>
-            )
-        }
-
+class Content extends React.Component {
+    render() {
         return (
-            <div>
-                <h4>{title}</h4>
-                {renderContents()}
-            </div>
+            <div></div>
         )
     }
-});
-
-module.exports = Content;
+}

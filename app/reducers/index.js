@@ -4,6 +4,7 @@ import app from './app';
 import course from './course';
 import lesson from './lesson';
 import subLesson from './subLesson';
+import content from './content';
 
 // const reducers = combineReducers({
 //   app,
@@ -21,4 +22,5 @@ export default {
   googleAuth,
   lesson,
   subLesson,
+  content,
 };

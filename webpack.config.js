@@ -45,7 +45,8 @@ module.exports = {
       Course: 'app/components/Course.jsx',
       SubLesson: 'app/components/SubLesson.jsx',
       Content: 'app/components/Content.jsx',
-      SortRoute: 'app/components/SortRoute.jsx'
+      SortRoute: 'app/components/SortRoute.jsx',
+      SideNavSub: 'app/components/SideNavSub.jsx'
     },
     extensions: ['*', '.js', '.jsx']
   },

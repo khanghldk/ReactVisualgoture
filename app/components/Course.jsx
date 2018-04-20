@@ -1,4 +1,9 @@
 import React from 'react';
+
+import { Route } from 'react-router-dom';
+
+import { history } from '../helpers';
+
 import { connect } from 'react-redux';
 import { Breadcrumb, Col, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -10,6 +15,7 @@ import { Redirect } from 'react-router-dom';
 
 import { getLessonsByCourseUID } from '../actions/getLessons';
 import { getSubLessonsByLessonUID } from '../actions/getSubLessons';
+import SubLesson from './SubLesson';
 
 class Course extends React.Component {
     constructor(props) {

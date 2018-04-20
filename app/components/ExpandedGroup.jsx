@@ -25,19 +25,24 @@ var ExpandedGroup = createReactClass({
             var result = [];
 
             for (var content in data) {
-                result.push(renderContent(data[content].uid, data[content].name));
+                result.push(renderContent(data[content].uid, data[content]));
             }
-
-            // data.map(item => {
-            //     result.push(renderContent(item));
-            // });
 
             return result;
         }
 
         var renderContent = (num, item) => {
+            var name = item.name;
+            
+            var path = window.location.pathname + '/' + title.replace(/ /g, '-') + '/' + name.replace(/ /g, '-');
+            path = path.replace(/basic-course/g, 'course');
+            path = path.replace(/advanced-course/g, 'course');
             return (
-                <ListGroupItem key={num}>{item}</ListGroupItem>
+                <ListGroupItem key={num}>
+                    <Link to={path}>
+                        {name}
+                    </Link>
+                </ListGroupItem>
             )
         }
         var link = title.replace(/ /g, '-');
@@ -45,15 +50,8 @@ var ExpandedGroup = createReactClass({
         return (
             <div>
                 <Row>
-                    <Col md={10} xs={10}>
+                    <Col md={12} xs={12}>
                         <a onClick={this.handleOnClick} className="groupControl" name={link}>{title}</a>
-                    </Col>
-                    <Col md={2} xs={2}>
-                        <Button>
-                            <Link to={pathName}>
-                                Go
-                            </Link>
-                        </Button>
                     </Col>
                 </Row>
                 <ListGroup className={"collapse" + (this.state.open ? ' in' : '')}>
