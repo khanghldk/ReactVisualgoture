@@ -4,6 +4,7 @@ const INITIAL_STATE = {
     loggedIn: false,
     uid: null,
     displayName: null,
+    role: null,
     loading: false,
 }
 
@@ -21,6 +22,7 @@ export default (state = INITIAL_STATE, action) => {
                 loggedIn: true,
                 uid: action.payload.uid,
                 displayName: action.payload.displayName,
+                role: action.payload.role,
                 loading: false,
             };
         case userConstants.LOGIN_FAILURE:

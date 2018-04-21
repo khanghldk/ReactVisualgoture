@@ -6,9 +6,7 @@ var createReactClass = require('create-react-class');
 
 var { Popover, Tooltip, Button, Modal, OverlayTrigger, Label, Form, FormGroup, FormControl, Col, ControlLabel } = require('react-bootstrap');
 
-import { loginWithGoogle } from "../actions/auth";
-
-import { login } from '../actions/googleAuthActions';
+import { login, signup } from '../actions/googleAuthActions';
 
 import { loginDefault } from '../actions/defaultAuth';
 
@@ -158,7 +156,12 @@ class AuthModal extends React.Component {
                             <Form horizontal onSubmit={this.handleSubmit}>
                                 <FormGroup>
                                     <Col smOffset={1} sm={10}>
-                                        <Button bsStyle="danger" bsSize="large" block>Continue with Google</Button>
+                                        <Button bsStyle="danger" 
+                                                bsSize="large" 
+                                                block
+                                                onClick={this.props.signup}>
+                                            Continue with Google
+                                        </Button>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup controlId="formHorizontalEmail">
@@ -220,4 +223,5 @@ export default (connect(state => ({
     {
         login,
         loginDefault,
+        signup
     })(AuthModal));
