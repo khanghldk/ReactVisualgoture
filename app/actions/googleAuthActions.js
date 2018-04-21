@@ -28,7 +28,7 @@ export function login() {
                 "googleUID": result.user.uid
             }
 
-            dispatch(loginRequest(account.email));
+            dispatch(loginRequest());
             userService.login(account.email, account.password, account.googleUID)
                 .then(function (data) {
                     if (data.length > 0) {

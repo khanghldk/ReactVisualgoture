@@ -8,13 +8,13 @@ import { firebaseAuth, googleProvider } from '../database/config';
 
 require('babel-polyfill');
 
-const loginRequest = email => ({ type: userConstants.LOGIN_REQUEST, email });
-const loginSuccess = payload => ({ type: userConstants.LOGIN_GOOGLE_SUCCESS, payload });
+const loginRequest = email => ({ type: userConstants.LOGIN_REQUEST });
+const loginSuccess = payload => ({ type: userConstants.LOGIN_SUCCESS, payload });
 const loginFailure = error => ({ type: userConstants.LOGIN_FAILURE, error });
 
 export function loginDefault(email, password, googleUID) {
     return async dispatch => {
-        dispatch(loginRequest(email));
+        dispatch(loginRequest());
         userService.login(email, password, googleUID)
             .then(function (data) {
                 console.log(data);

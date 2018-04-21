@@ -16,6 +16,12 @@ export default (state = INITIAL_STATE, action) => {
                 loading: true,
                 error: null,
             };
+        case userConstants.LOGIN_GOOGLE_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            }
         case userConstants.LOGIN_GOOGLE_SUCCESS:
             return {
                 ...state,
@@ -23,6 +29,21 @@ export default (state = INITIAL_STATE, action) => {
                 uid: action.payload.uid,
                 displayName: action.payload.displayName,
                 role: action.payload.role,
+                loading: false,
+            };
+        case userConstants.LOGIN_SUCCESS:
+            return {
+                ...state,
+                loggedIn: true,
+                uid: action.payload.uid,
+                displayName: action.payload.displayName,
+                role: action.payload.role,
+                loading: false,
+            };
+        case userConstants.LOGIN_GOOGLE_FAILURE:
+            return {
+                ...state,
+                error: action.payload,
                 loading: false,
             };
         case userConstants.LOGIN_FAILURE:
