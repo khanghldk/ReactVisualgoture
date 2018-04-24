@@ -8,9 +8,13 @@ import { alertActions } from '../actions';
 import Home from './Home';
 import AppNav from './AppNav';
 
+import MenuAppBar from './MenuAppBar';
+
 import Course from './Course';
 
 import SubLesson from './SubLesson';
+
+import Algo from './Algo';
 
 class App extends React.Component {
   constructor(props) {
@@ -24,7 +28,6 @@ class App extends React.Component {
   render() {
     const { alert } = this.props;
     return (
-      <div className="container">
         <Router history={history}>
           <div>
             <AppNav />
@@ -32,10 +35,9 @@ class App extends React.Component {
             <Route path='/basic-course/:courseName' component={Course} />
             <Route path='/advanced-course/:courseName' component={Course} />       
             <Route path='/course/:courseName/:lesson/:sublesson' component={SubLesson} />
+            <Route path='/algo' component={Algo} />
           </div>
         </Router>
-      </div>
-
     );
   }
 }

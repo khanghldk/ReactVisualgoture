@@ -10,15 +10,20 @@ import { App } from './components';
 
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import CircularProgress from 'material-ui/CircularProgress';
+
+import {MuiThemeProvider, createMuiTheme} from 'material-ui/styles';
+
+const theme = createMuiTheme();
 
 require('applicationStyle');
 
 render(
-  <Provider store={store}>
-    <PersistGate  persistor={persistStore(store)}>
-      <App />
-    </PersistGate>
-  </Provider>,
+  <MuiThemeProvider theme={theme}>
+    <Provider store={store}>
+      <PersistGate persistor={persistStore(store)}>
+        <App />
+      </PersistGate>
+    </Provider>
+  </MuiThemeProvider>,
   document.getElementById('app')
 );

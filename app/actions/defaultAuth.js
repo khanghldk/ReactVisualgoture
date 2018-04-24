@@ -17,7 +17,6 @@ export function loginDefault(email, password, googleUID) {
         dispatch(loginRequest());
         userService.login(email, password, googleUID)
             .then(function (data) {
-                console.log(data);
                 dispatch(loginSuccess(data[0]));
                 history.push('/');
             }, function (error) {
@@ -27,7 +26,6 @@ export function loginDefault(email, password, googleUID) {
 }
 
 export function logout() {
-    // firebaseAuth().signOut();
     return dispatch => {
         dispatch({ type: userConstants.LOGOUT });
     };
