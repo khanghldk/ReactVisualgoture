@@ -43,7 +43,6 @@ export function login() {
                     dispatch(loginFailure(error));
                 });
 
-            // dispatch(loginSuccess(result));
         } catch (error) {
             dispatch(loginFailure(error));
         }
@@ -55,8 +54,6 @@ export function signup() {
         dispatch(signupRequest());
         try {
             const result = await firebaseAuth().signInWithPopup(googleProvider);
-
-            console.log(result.user.uid);
 
             let account = {
                 "email": result.user.email,
@@ -108,6 +105,69 @@ export function signup() {
                     }
                 }, function (error) {
                     console.log(error);
+                    dispatch(loginFailure(error));
+                });
+
+            // dispatch(loginSuccess(result));
+        } catch (error) {
+            dispatch(loginFailure(error));
+        }
+    };
+}
+
+export function signupDefault(email, password, googleUID) {
+    return async dispatch => {
+        dispatch(signupRequest());
+        try {
+            let account = {
+                "email": email,
+                "password": password,
+                "googleUID": googleUID
+            }
+
+            userService.signup(account.email, account.password, account.googleUID)
+                .then(function (data) {
+                    if (data.affectedRows > 0) {
+                        dispatch(signupSuccess(data[0]));
+
+                        var insertId = data.insertId;
+
+                        var displayName = email.substring(0, email.indexOf("@"));
+
+                        let user = {
+                            "accountUID": insertId,
+                            "displayName": displayName,
+                            "role": "user"
+                        }
+
+                        userService.createUser(user.accountUID, user.displayName, user.role)
+                            .then(function (data) {
+                                if (data.affectedRows > 0) {
+                                    userService.login(account.email, account.password, account.googleUID)
+                                        .then(function (data) {
+                                            if (data.length > 0) {
+                                                dispatch(loginSuccess(data[0]));
+                                                history.push('/');
+                                            } else {
+                                                dispatch(loginFailure('do not register'));
+                                                history.push('/');
+                                            }
+                                        }, function (error) {
+                                            dispatch(loginFailure(error));
+                                        });
+                                } else {
+                                    dispatch(loginFailure('something went wrong'));
+                                }
+                            }, function (error) {
+                                console.log(error);
+                            })
+                        history.push('/');
+
+                    } else {
+                        dispatch(signupFailure('account existed'));
+                        history.push('/');
+                    }
+                }, function (error) {
                     dispatch(loginFailure(error));
                 });
 

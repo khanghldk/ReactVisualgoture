@@ -5,7 +5,7 @@ import { Route } from 'react-router-dom';
 import { history } from '../helpers';
 
 import { connect } from 'react-redux';
-import { Breadcrumb, Col, Row } from 'react-bootstrap';
+import { Tab, Tabs, Breadcrumb, Col, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 var SideNav = require('SideNav');
 
@@ -66,10 +66,13 @@ class Course extends React.Component {
 
         var renderSubLessons = () => {
             var result = [];
-
+            var count = 0;
             for (var lesson in lessons) {
+                count++;
                 result.push(
-                    <ExpandedGroup title={lessons[lesson].name} data={subLessons[lessons[lesson].uid]}>
+                    <ExpandedGroup 
+                        title={lessons[lesson].name} 
+                        data={subLessons[lessons[lesson].uid]}>
 
                     </ExpandedGroup>
                 );
@@ -85,19 +88,20 @@ class Course extends React.Component {
         }
 
         return (
-            <div>
-                <Breadcrumb>
-                    <Breadcrumb.Item href='/'>
-                        Basic Algorithms
-                    </Breadcrumb.Item>
-                    <Breadcrumb.Item active>{currentCourse.name}</Breadcrumb.Item>
-                </Breadcrumb>
+            <div className="container">
                 <Row>
-                    <Col md={3} sm={4} xs={12}>
-                        <SideNav title={currentCourse.name} contents={lessons}></SideNav>
-                    </Col>
-                    <Col mdOffset={1} md={7} sm={8} xs={12}>
-                        {renderSubLessons()}
+                    <h1 className="text-center">{currentCourse.name}</h1>
+                </Row>
+                <Row>
+                    <Col smOffset={1} sm={10}>
+                        <Tabs defaultActiveKey={1} id="tab-course">
+                            <Tab eventKey={1} title="Overview">
+                                <h6>{currentCourse.description}</h6>
+                            </Tab>
+                            <Tab eventKey={2} title="Syllabus">
+                                {renderSubLessons()}
+                            </Tab>
+                        </Tabs>
                     </Col>
                 </Row>
             </div>

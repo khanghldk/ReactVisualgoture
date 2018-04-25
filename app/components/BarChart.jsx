@@ -15,22 +15,6 @@ class BarChart extends Component {
         this.createBarChart()
     }
 
-    // renderx(selection) {
-    //     selection
-    //         .attr('width', function (d, i) {
-    //             return d.width * bar.width;
-    //         })
-    //         .attr('height', function (d, i) {
-    //             return d.range * bar.height;
-    //         })
-    //         .attr('fill', function (d, i) {
-    //             return d.color;
-    //         })
-    //         .attr('transform', function (d, i) {
-    //             return 'translate(' + [chart.margins.x + i * (bar.width + bar.spacing), -chart.margins.y + chart.height - d.value * bar.height] + ') ' + 'rotate(' + [(d.angle)] + ')' + 'translate(' + [-bar.width / 2, -d.range / 2] + ')';
-    //         });
-    // }
-
     createBarChart() {
 
         var dataX = this.props.dataX;

@@ -5,6 +5,7 @@ import course from './course';
 import lesson from './lesson';
 import subLesson from './subLesson';
 import content from './content';
+import learnedCourse from './learnedCourse';
 
 // const reducers = combineReducers({
 //   app,
@@ -23,4 +24,5 @@ export default {
   lesson,
   subLesson,
   content,
+  learnedCourse
 };

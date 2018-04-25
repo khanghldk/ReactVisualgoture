@@ -6,7 +6,7 @@ var createReactClass = require('create-react-class');
 
 var { Popover, Tooltip, Button, Modal, OverlayTrigger, Label, Form, FormGroup, FormControl, Col, ControlLabel } = require('react-bootstrap');
 
-import { login, signup } from '../actions/googleAuthActions';
+import { login, signup, signupDefault } from '../actions/googleAuthActions';
 
 import { loginDefault } from '../actions/defaultAuth';
 
@@ -67,7 +67,28 @@ class AuthModal extends React.Component {
         e.preventDefault();
         var { email, password } = this.state;
         this.props.loginDefault(email, password, null);
+        this.setState({
+            email: '',
+            password: '',
+            passwordConfirm: ''
+        })
     }
+
+    handleSignupDefault = (e) => {
+        e.preventDefault();
+        var {email, password, passwordConfirm} = this.state;
+        if (password === passwordConfirm) {
+            this.props.signupDefault(email, password, null);
+        } else {
+            console.log('confirm password');
+        }
+        this.setState({
+            email: '',
+            password: '',
+            passwordConfirm: ''
+        })
+    }
+
     handleEmailChange = (e) => {
         this.setState({
             email: e.target.value
@@ -78,6 +99,13 @@ class AuthModal extends React.Component {
             password: e.target.value
         })
     }
+
+    handlePasswordConfirmChange = (e) => {
+        this.setState({
+            passwordConfirm: e.target.value
+        })
+    }
+
     render() {
         var { show, type } = this.state;
 
@@ -166,40 +194,50 @@ class AuthModal extends React.Component {
                                 </FormGroup>
                                 <FormGroup controlId="formHorizontalEmail">
                                     <Col smOffset={1} sm={10}>
-                                        <ControlLabel>
+                                    <ControlLabel>
                                             Email
-                                </ControlLabel>
+                                        </ControlLabel>
                                         <FormControl
                                             type="email"
                                             placeholder="Email"
-                                            inputRef={ref => { this.email = ref; }} />
+                                            value = {this.state.email}
+                                            onChange = {this.handleEmailChange} />
                                     </Col>
                                 </FormGroup>
                                 <FormGroup controlId="formHorizontalPassword">
                                     <Col smOffset={1} sm={10}>
                                         <ControlLabel>
                                             Password
-                                </ControlLabel>
+                                        </ControlLabel>
                                         <FormControl
                                             type="password"
                                             placeholder="Password"
-                                            inputRef={ref => { this.password = ref; }} />
+                                            value = {this.state.password}
+                                            onChange = {this.handlePasswordChange} />
                                     </Col>
                                 </FormGroup>
                                 <FormGroup controlId="formHorizontalPasswordConfirm">
                                     <Col smOffset={1} sm={10}>
                                         <ControlLabel>
                                             Confirm Password
-                                </ControlLabel>
+                                        </ControlLabel>
                                         <FormControl
-                                            type="passwordConfirm"
+                                            type="password"
                                             placeholder="Confirm Password"
-                                            inputRef={ref => { this.passwordConfirm = ref; }} />
+                                            value = {this.state.passwordConfirm}
+                                            onChange = {this.handlePasswordConfirmChange} />
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
                                     <Col smOffset={1} sm={10}>
-                                        <Button bsStyle="info" bsSize="large" block type="submit">Sign up</Button>
+                                        <Button 
+                                            bsStyle="info" 
+                                            bsSize="large" 
+                                            block 
+                                            type="submit"
+                                            onClick={this.handleSignupDefault}>
+                                            Sign up
+                                        </Button>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup>
@@ -223,5 +261,6 @@ export default (connect(state => ({
     {
         login,
         loginDefault,
-        signup
+        signup,
+        signupDefault
     })(AuthModal));

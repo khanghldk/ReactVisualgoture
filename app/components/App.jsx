@@ -29,7 +29,7 @@ class App extends React.Component {
     const { alert } = this.props;
     return (
         <Router history={history}>
-          <div>
+          <div className="container">
             <AppNav />
             <Route exact path='/' component={Home} />
             <Route path='/basic-course/:courseName' component={Course} />

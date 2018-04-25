@@ -7,6 +7,10 @@ var SideNavSub = require('SideNavSub');
 
 import { getContentsBySubLessonUID } from '../actions/getContents';
 
+import { Stepper } from 'material-ui';
+
+import VerticalLinearStepper from './VerticalLinearStepper';
+
 class SubLesson extends React.Component {
 
     constructor(props) {
@@ -16,7 +20,9 @@ class SubLesson extends React.Component {
             currentLesson: undefined,
             currentSubLesson: undefined,
             subLessons: [],
-            contents: []
+            contents: [],
+            order: 0,
+            total: 0
         }
     }
 
@@ -60,22 +66,70 @@ class SubLesson extends React.Component {
             currentCourse: currentCourse,
             currentLesson: currentLesson,
             currentSubLesson: currentSubLesson,
-            subLessons: subLessons
+            subLessons: subLessons,
+            total: Object.keys(subLessons).length,
+            order: currentSubLesson.order - 1
         });
 
         this.props.getContentsBySubLessonUID(currentSubLesson.uid);
 
     }
 
+    handleNext = (e) => {
+        e.preventDefault();
+
+        var { order, total, currentSubLesson, subLessons } = this.state;
+
+        if (order < total - 1) {
+            order = order + 1;
+            for (var item in subLessons) {
+                if ((subLessons[item].order - 1) === order) {
+                    currentSubLesson = subLessons[item];
+                    break;
+                }
+            }
+        }
+        this.props.getContentsBySubLessonUID(currentSubLesson.uid);
+
+        this.setState({
+            currentSubLesson: currentSubLesson,
+            order: order
+        });
+    }
+
+    handlePrevious = (e) => {
+        e.preventDefault();
+        var { order, total, currentSubLesson, subLessons } = this.state;
+        if (order > 0) {
+            order = order - 1;
+            console.log(order);
+            for (var item in subLessons) {
+                if ((subLessons[item].order - 1) === order) {
+                    currentSubLesson = subLessons[item];
+                    break;
+                }
+            }
+        }
+
+        this.props.getContentsBySubLessonUID(currentSubLesson.uid);
+
+        this.setState({
+            currentSubLesson: currentSubLesson,
+            order: order
+        });
+    }
+
     render() {
         var { content } = this.props;
-        var { currentSubLesson, currentLesson, subLessons, currentCourse } = this.state;
+        var { currentSubLesson, currentLesson, subLessons, currentCourse, total, order } = this.state;
+
+        console.log(this.state);
+
         content = content.byHashContents[currentSubLesson.uid];
 
         var nextSubLesson = null;
 
         for (var item in subLessons) {
-            console.log(subLessons[item].order);
             if (subLessons[item].order - currentSubLesson.order === 1) {
                 nextSubLesson = subLessons[item];
                 break;
@@ -105,7 +159,7 @@ class SubLesson extends React.Component {
                 path = path.substr(0, pos);
                 path = path + '/' + nextSubLesson.name.toLowerCase().replace(/ /g, '-');
                 return (
-                    <Button bsStyle={{alignSelf: 'flex-end'}}>
+                    <Button bsStyle={{ alignSelf: 'flex-end' }}>
                         <Link to={path}>
                             {nextSubLesson.name}
                         </Link>
@@ -124,7 +178,7 @@ class SubLesson extends React.Component {
                 </Breadcrumb>
                 <Row>
                     <Col md={3} sm={4} xs={12}>
-                        <SideNavSub title={currentLesson.name} contents={subLessons}></SideNavSub>
+                        <VerticalLinearStepper contents={subLessons} activeStep={order}></VerticalLinearStepper>
                     </Col>
                     <Col mdOffset={1} md={7} sm={8} xs={12}>
                         <h3 className="text-center">{currentSubLesson.name}</h3>
@@ -132,7 +186,8 @@ class SubLesson extends React.Component {
                     </Col>
                 </Row>
                 <Row>
-                    {/* {renderNextButton()} */}
+                    <Button className="pull-left" onClick={this.handlePrevious}>Previous</Button>
+                    <Button className="pull-right" onClick={this.handleNext}>Next</Button>
                 </Row>
             </div>
         )
