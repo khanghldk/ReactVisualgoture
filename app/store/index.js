@@ -19,7 +19,7 @@ const store = createStore(
   reducer,
   {},
   composeWithDevTools(
-    applyMiddleware(thunk, loggerMiddleware),
+    applyMiddleware(thunk),
   )
 );
 

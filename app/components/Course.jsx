@@ -13,8 +13,8 @@ var ExpandedGroup = require('ExpandedGroup');
 
 import { Redirect } from 'react-router-dom';
 
-import { getLessonsByCourseUID } from '../actions/getLessons';
-import { getSubLessonsByLessonUID } from '../actions/getSubLessons';
+import { getTopicsByCourseUID } from '../actions/getTopics';
+import { getLessonsByTopicUID } from '../actions/getLessons';
 import SubLesson from './SubLesson';
 
 class Course extends React.Component {
@@ -22,8 +22,8 @@ class Course extends React.Component {
         super(props);
         this.state = {
             currentCourse: undefined,
-            lessons: [],
-            subLessons: []
+            topics: [],
+            lessons: []
         }
     }
 
@@ -42,37 +42,37 @@ class Course extends React.Component {
             }
         }
 
-        this.props.getLessonsByCourseUID(targetCourse.uid);
+        this.props.getTopicsByCourseUID(targetCourse.uid);
 
         this.setState({
             currentCourse: targetCourse,
-            lessons: this.props.lesson.byHashLessons[targetCourse.uid]
+            topics: this.props.topic.byHashTopics[targetCourse.uid]
         });
 
-        var currentLessons = this.props.lesson.byHashLessons[targetCourse.uid];
+        var currentTopics = this.props.topic.byHashTopics[targetCourse.uid];
 
-        for (var lesson in currentLessons) {
-            this.props.getSubLessonsByLessonUID(currentLessons[lesson].uid);
+        for (var topic in currentTopics) {
+            this.props.getLessonsByTopicUID(currentTopics[topic].uid);
         }
 
         this.setState({
-            subLessons: this.props.subLesson.byHashSubLessons
+            lessons: this.props.lesson.byHashLessons
         })
 
     }
 
     render() {
-        var { currentCourse, lessons, subLessons } = this.state;
+        var { currentCourse, topics, lessons } = this.state;
 
-        var renderSubLessons = () => {
+        var renderLessons = () => {
             var result = [];
             var count = 0;
-            for (var lesson in lessons) {
+            for (var topic in topics) {
                 count++;
                 result.push(
                     <ExpandedGroup 
-                        title={lessons[lesson].name} 
-                        data={subLessons[lessons[lesson].uid]}>
+                        title={topics[topic].name} 
+                        data={lessons[topics[topic].uid]}>
 
                     </ExpandedGroup>
                 );
@@ -99,7 +99,7 @@ class Course extends React.Component {
                                 <h6>{currentCourse.description}</h6>
                             </Tab>
                             <Tab eventKey={2} title="Syllabus">
-                                {renderSubLessons()}
+                                {renderLessons()}
                             </Tab>
                         </Tabs>
                     </Col>
@@ -111,11 +111,11 @@ class Course extends React.Component {
 
 export default (connect(state => ({
     course: state.course,
+    topic: state.topic,
     lesson: state.lesson,
-    subLesson: state.subLesson,
     googleAuth: state.googleAuth,
 }),
     {
-        getLessonsByCourseUID,
-        getSubLessonsByLessonUID,
+        getTopicsByCourseUID,
+        getLessonsByTopicUID,
     })(Course));

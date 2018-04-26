@@ -1,4 +1,4 @@
-import { userConstants } from '../constants';
+import { userConstants, learnedCourseConstants } from '../constants';
 import { alertActions } from './';
 import { history } from '../helpers';
 
@@ -18,7 +18,6 @@ const signupFailure = error => ({ type: userConstants.SIGNUP_GOOGLE_FAILURE, err
 
 export function login() {
     return async dispatch => {
-        // dispatch(loginRequest());
         try {
             const result = await firebaseAuth().signInWithPopup(googleProvider);
 
@@ -182,5 +181,6 @@ export function logout() {
     firebaseAuth().signOut();
     return dispatch => {
         dispatch({ type: userConstants.LOGOUT });
+        dispatch({ type: learnedCourseConstants.CLEAR});
     };
 }

@@ -1,11 +1,11 @@
-export const subLessonService = {
-    getSubLessonsByLessonUID,
+export const topicService = {
+    getTopicsByCourseUID,
 };
 
 var axios = require('axios');
 
-function getSubLessonsByLessonUID(lessonUID) {
-    let url = 'http://localhost:6969/subLesson/' + lessonUID;
+function getTopicsByCourseUID(courseUID) {
+    let url = 'http://localhost:6969/topic/' + courseUID;
     return axios.get(url)
     .then(function(response) {
         if (response.data.length === 0) {

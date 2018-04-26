@@ -1,6 +1,0 @@
-export const subLessonConstants = {
-    SUCCESS: 'SUBLESSON_SUCCESS',
-    ERROR: 'SUBLESSON_ERROR',
-    CLEAR: 'SUBLESSON_CLEAR',
-    REQUEST: 'SUBLESSON_REQUEST'
-};

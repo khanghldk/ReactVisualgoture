@@ -1,11 +1,11 @@
 export const lessonService = {
-    getLessonsByCourseUID,
+    getLessonsByTopicUID,
 };
 
 var axios = require('axios');
 
-function getLessonsByCourseUID(courseUID) {
-    let url = 'http://localhost:6969/lesson/' + courseUID;
+function getLessonsByTopicUID(TopicUID) {
+    let url = 'http://localhost:6969/lesson/' + TopicUID;
     return axios.get(url)
     .then(function(response) {
         if (response.data.length === 0) {

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 var SideNavSub = require('SideNavSub');
 
 import { getContentsBySubLessonUID } from '../actions/getContents';
+import { getLessonsByTopicUID } from '../actions/getLessons';
 
 import { Stepper } from 'material-ui';
 
@@ -17,9 +18,9 @@ class SubLesson extends React.Component {
         super(props);
         this.state = {
             currentCourse: undefined,
+            currentTopic: undefined,
             currentLesson: undefined,
-            currentSubLesson: undefined,
-            subLessons: [],
+            lessons: [],
             contents: [],
             order: 0,
             total: 0
@@ -28,8 +29,8 @@ class SubLesson extends React.Component {
 
     componentWillMount = () => {
 
-        var subName = this.props.match.params.sublesson.replace(/-/g, ' ').toLowerCase();
-        var lessonName = this.props.match.params.lesson.replace(/-/g, ' ').toLowerCase();
+        var lessonName = this.props.match.params.sublesson.replace(/-/g, ' ').toLowerCase();
+        var topicName = this.props.match.params.lesson.replace(/-/g, ' ').toLowerCase();
         var courseName = this.props.match.params.courseName.replace(/-/g, ' ').toLowerCase();
 
         var courses = this.props.course.courses;
@@ -41,97 +42,128 @@ class SubLesson extends React.Component {
         });
         currentCourse = currentCourse[0];
 
-        var lessons = this.props.lesson.byHashLessons[currentCourse.uid];
-        var currentLesson;
+        var topics = this.props.topic.byHashTopics[currentCourse.uid];
+        var currentTopic;
 
-        for (var lesson in lessons) {
-            if (lessons[lesson].name && lessons[lesson].name.toLowerCase() === lessonName) {
-                currentLesson = lessons[lesson];
+        for (var lesson in topics) {
+            if (topics[lesson].name && topics[lesson].name.toLowerCase() === topicName) {
+                currentTopic = topics[lesson];
                 break;
             }
         }
 
-        var subLessons = this.props.subLesson.byHashSubLessons[currentLesson.uid];
+        var lessons = this.props.lesson.byHashLessons[currentTopic.uid];
 
-        var currentSubLesson;
+        var currentLesson;
 
-        for (var item in subLessons) {
-            if (subLessons[item].name && subLessons[item].name.toLowerCase().includes(subName)) {
-                currentSubLesson = subLessons[item];
+        for (var item in lessons) {
+            if (lessons[item].name && lessons[item].name.toLowerCase().includes(lessonName)) {
+                currentLesson = lessons[item];
                 break;
             }
         }
 
         this.setState({
             currentCourse: currentCourse,
+            currentTopic: currentTopic,
             currentLesson: currentLesson,
-            currentSubLesson: currentSubLesson,
-            subLessons: subLessons,
-            total: Object.keys(subLessons).length,
-            order: currentSubLesson.order - 1
+            lessons: lessons,
+            total: Object.keys(lessons).length,
+            order: currentLesson.order - 1
         });
 
-        this.props.getContentsBySubLessonUID(currentSubLesson.uid);
+        this.props.getContentsBySubLessonUID(currentLesson.uid);
+
+    }
+
+    getNextLesson = () => {
+        var { currentLesson, currentTopic, lessons, currentCourse, total, order } = this.state;
+
+        var topics = this.props.topic.byHashTopics[currentCourse.uid];
+
+        for (var item in topics) {
+            if (currentTopic.order + 1 === topics[item].order) {
+                currentTopic = topics[item];
+                break;
+            }
+        }
+
+        lessons = this.props.lesson.byHashLessons[currentTopic.uid];
+
+        for (var item in lessons) {
+            if (lessons[item].order === 1) {
+                currentLesson = lessons[item];
+                break;
+            }
+        }
+
+        this.setState({
+            currentTopic: currentTopic,
+            lessons: lessons,
+            currentLesson: currentLesson,
+            total: Object.keys(lessons).length,
+            order: 0
+        });
+
+        this.props.getContentsBySubLessonUID(currentLesson.uid);
 
     }
 
     handleNext = (e) => {
         e.preventDefault();
 
-        var { order, total, currentSubLesson, subLessons } = this.state;
+        var { order, total, currentLesson, lessons } = this.state;
 
         if (order < total - 1) {
             order = order + 1;
-            for (var item in subLessons) {
-                if ((subLessons[item].order - 1) === order) {
-                    currentSubLesson = subLessons[item];
+            for (var item in lessons) {
+                if ((lessons[item].order - 1) === order) {
+                    currentLesson = lessons[item];
                     break;
                 }
             }
+            this.setState({
+                currentLesson: currentLesson,
+                order: order
+            });
+        } else {
+            this.getNextLesson();
         }
-        this.props.getContentsBySubLessonUID(currentSubLesson.uid);
-
-        this.setState({
-            currentSubLesson: currentSubLesson,
-            order: order
-        });
+        this.props.getContentsBySubLessonUID(currentLesson.uid);
     }
 
     handlePrevious = (e) => {
         e.preventDefault();
-        var { order, total, currentSubLesson, subLessons } = this.state;
+        var { order, total, currentLesson, lessons } = this.state;
         if (order > 0) {
             order = order - 1;
-            console.log(order);
-            for (var item in subLessons) {
-                if ((subLessons[item].order - 1) === order) {
-                    currentSubLesson = subLessons[item];
+            for (var item in lessons) {
+                if ((lessons[item].order - 1) === order) {
+                    currentLesson = lessons[item];
                     break;
                 }
             }
         }
 
-        this.props.getContentsBySubLessonUID(currentSubLesson.uid);
+        this.props.getContentsBySubLessonUID(currentLesson.uid);
 
         this.setState({
-            currentSubLesson: currentSubLesson,
+            currentLesson: currentLesson,
             order: order
         });
     }
 
     render() {
         var { content } = this.props;
-        var { currentSubLesson, currentLesson, subLessons, currentCourse, total, order } = this.state;
+        var { currentLesson, currentTopic, lessons, currentCourse, total, order } = this.state;
 
-        console.log(this.state);
-
-        content = content.byHashContents[currentSubLesson.uid];
+        content = content.byHashContents[currentLesson.uid];
 
         var nextSubLesson = null;
 
-        for (var item in subLessons) {
-            if (subLessons[item].order - currentSubLesson.order === 1) {
-                nextSubLesson = subLessons[item];
+        for (var item in lessons) {
+            if (lessons[item].order - currentLesson.order === 1) {
+                nextSubLesson = lessons[item];
                 break;
             }
         }
@@ -152,36 +184,20 @@ class SubLesson extends React.Component {
             return result;
         }
 
-        var renderNextButton = () => {
-            if (nextSubLesson) {
-                var path = window.location.pathname;
-                var pos = path.lastIndexOf('/');
-                path = path.substr(0, pos);
-                path = path + '/' + nextSubLesson.name.toLowerCase().replace(/ /g, '-');
-                return (
-                    <Button bsStyle={{ alignSelf: 'flex-end' }}>
-                        <Link to={path}>
-                            {nextSubLesson.name}
-                        </Link>
-                    </Button>
-                )
-            }
-        }
-
         return (
             <div>
                 <Breadcrumb>
                     <Breadcrumb.Item href='/'>
                         {currentCourse.name}
                     </Breadcrumb.Item>
-                    <Breadcrumb.Item active>{currentLesson.name}</Breadcrumb.Item>
+                    <Breadcrumb.Item active>{currentTopic.name}</Breadcrumb.Item>
                 </Breadcrumb>
                 <Row>
                     <Col md={3} sm={4} xs={12}>
-                        <VerticalLinearStepper contents={subLessons} activeStep={order}></VerticalLinearStepper>
+                        <VerticalLinearStepper contents={lessons} activeStep={order}></VerticalLinearStepper>
                     </Col>
                     <Col mdOffset={1} md={7} sm={8} xs={12}>
-                        <h3 className="text-center">{currentSubLesson.name}</h3>
+                        <h3 className="text-center">{currentLesson.name}</h3>
                         {renderContents()}
                     </Col>
                 </Row>
@@ -196,13 +212,12 @@ class SubLesson extends React.Component {
 
 export default (connect(state => ({
     course: state.course,
+    topic: state.topic,
     lesson: state.lesson,
-    subLesson: state.subLesson,
     googleAuth: state.googleAuth,
-    subLesson: state.subLesson,
     content: state.content
-
 }),
     {
         getContentsBySubLessonUID,
+        getLessonsByTopicUID
     })(SubLesson));

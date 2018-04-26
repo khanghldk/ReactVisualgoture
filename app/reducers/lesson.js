@@ -1,31 +1,29 @@
 import { lessonConstants } from '../constants';
 
 const INITIAL_STATE = {
-    byCourseID: ['0'],
+    byTopicUID: ['0'],
     byHashLessons: {
-        '0': { courseUID: '0', lessons: [] }
+        '0': { topicUID: '0', lessons: [] }
     }
-    // courseUID: -1,
-    // lessons: []
 }
 
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case lessonConstants.REQUEST:
-            if (!state.byCourseID.includes(action.courseUID)) {
+            if (!state.byTopicUID.includes(action.topicUID)) {
                 return {
-                    byCourseID: [...state.byCourseID, action.courseUID],
+                    byTopicUID: [...state.byTopicUID, action.topicUID],
                     byHashLessons: {
                         ...state.byHashLessons,
-                        [action.courseUID]: []
+                        [action.topicUID]: []
                     }
                 }
             } else {
                 return state;
             }
         case lessonConstants.SUCCESS:
-            state.byHashLessons[action.courseUID] = {
-                ...state.byHashLessons[action.courseUID],
+            state.byHashLessons[action.topicUID] = {
+                ...state.byHashLessons[action.topicUID],
                 ...action.payload
             }
             return {

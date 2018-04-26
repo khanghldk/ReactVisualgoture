@@ -2,27 +2,18 @@ import alert from './alert';
 import googleAuth from './googleAuth';
 import app from './app';
 import course from './course';
+import topic from './topic';
 import lesson from './lesson';
-import subLesson from './subLesson';
 import content from './content';
 import learnedCourse from './learnedCourse';
-
-// const reducers = combineReducers({
-//   app,
-//   alert,
-//   googleAuth,
-//   course,
-// });
-
-// export default reducers;
 
 export default {
   alert,
   app,
   course,
   googleAuth,
+  topic,
   lesson,
-  subLesson,
   content,
   learnedCourse
 };
