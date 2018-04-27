@@ -1,3 +1,5 @@
+import {apiConstants} from '../constants';
+
 export const userService = {
     login,
     signup,
@@ -8,7 +10,7 @@ export const userService = {
 var axios = require('axios');
 
 function login(email, password, googleUID) {
-    var url = 'http://localhost:6969/login';
+    var url = apiConstants.URL + 'login';
     return axios.post(url, {
         "email": email,
         "password": password,
@@ -25,7 +27,7 @@ function login(email, password, googleUID) {
 }
 
 function signup(email, password, googleUID) {
-    var url = 'http://localhost:6969/signup';
+    var url = apiConstants.URL + 'signup';
     return axios.post(url, {
         "email": email,
         "password": password,
@@ -38,7 +40,7 @@ function signup(email, password, googleUID) {
 }
 
 function createUser(accountUID, displayName, role) {
-    var url = 'http://localhost:6969/create';
+    var url = apiConstants.URL + 'create';
     return axios.post(url, {
         "accountUID": accountUID,
         "displayName": displayName,

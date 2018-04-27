@@ -1,3 +1,5 @@
+import {apiConstants} from '../constants';
+
 export const contentService = {
     getContentsBySubLessonUID,
 };
@@ -5,7 +7,8 @@ export const contentService = {
 var axios = require('axios');
 
 function getContentsBySubLessonUID(subLessonUID) {
-    let url = 'http://localhost:6969/content/' + subLessonUID;
+    var url = apiConstants.URL + 'content/'
+    url += subLessonUID;
     return axios.get(url)
     .then(function(response) {
         if (response.data.length === 0) {

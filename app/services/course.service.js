@@ -1,3 +1,5 @@
+import {apiConstants} from '../constants';
+
 export const courseService = {
     getAll,
 };
@@ -5,7 +7,7 @@ export const courseService = {
 var axios = require('axios');
 
 function getAll() {
-    let url = 'http://localhost:6969/course';
+    let url = apiConstants.URL + 'course';
     return axios.get(url)
     .then(function(response) {
         if (response.data.length === 0) {

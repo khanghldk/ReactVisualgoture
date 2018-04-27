@@ -14,7 +14,7 @@ import Course from './Course';
 
 import SubLesson from './SubLesson';
 
-import Algo from './Algo';
+import Sort from './Sort';
 
 class App extends React.Component {
   constructor(props) {
@@ -35,7 +35,7 @@ class App extends React.Component {
             <Route path='/basic-course/:courseName' component={Course} />
             <Route path='/advanced-course/:courseName' component={Course} />       
             <Route path='/course/:courseName/:lesson/:sublesson' component={SubLesson} />
-            <Route path='/algo' component={Algo} />
+            <Route path='/algo' component={Sort} />
           </div>
         </Router>
     );

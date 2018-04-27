@@ -1,3 +1,5 @@
+import {apiConstants} from '../constants';
+
 export const topicService = {
     getTopicsByCourseUID,
 };
@@ -5,7 +7,8 @@ export const topicService = {
 var axios = require('axios');
 
 function getTopicsByCourseUID(courseUID) {
-    let url = 'http://localhost:6969/topic/' + courseUID;
+    var url = apiConstants.URL + 'topic/';
+    url += courseUID;
     return axios.get(url)
     .then(function(response) {
         if (response.data.length === 0) {

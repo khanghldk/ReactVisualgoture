@@ -3,14 +3,16 @@ import { connect } from 'react-redux';
 import { Breadcrumb, Col, Row, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-var SideNavSub = require('SideNavSub');
-
 import { getContentsBySubLessonUID } from '../actions/getContents';
 import { getLessonsByTopicUID } from '../actions/getLessons';
 
 import { Stepper } from 'material-ui';
 
 import VerticalLinearStepper from './VerticalLinearStepper';
+
+import { apiConstants } from '../constants'
+
+import Sort from './Sort';
 
 class SubLesson extends React.Component {
 
@@ -76,6 +78,25 @@ class SubLesson extends React.Component {
 
     }
 
+    getAlgo(uid) {
+        var result;
+        $.ajax({
+            url: apiConstants.URL + "algo/" + uid,
+            type: "GET",
+            async: false,
+            // data: JSON.stringify(uid),
+            cache: false,
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                result = data;
+            },
+            error: function (error) {
+                console.log("error" + error.responseText);
+            }
+        });
+        return result[0];
+    }
+
     getNextLesson = () => {
         var { currentLesson, currentTopic, lessons, currentCourse, total, order } = this.state;
 
@@ -129,7 +150,12 @@ class SubLesson extends React.Component {
         } else {
             this.getNextLesson();
         }
-        this.props.getContentsBySubLessonUID(currentLesson.uid);
+        try {
+            this.props.getContentsBySubLessonUID(currentLesson.uid);
+        } catch (error) {
+
+        }
+
     }
 
     handlePrevious = (e) => {
@@ -169,19 +195,33 @@ class SubLesson extends React.Component {
         }
 
         var renderContents = () => {
-            var result = [];
-            for (var item in content) {
-                var textContent = content[item].textContent;
-                result.push(
-                    <Row className="lead">
-                        {textContent.split('\n').map((item, key) => {
-                            return <span key={key}>{item}<br /></span>
-                        })}
-                    </Row>
-                )
+            if (currentLesson.type === 'text') {
+                var result = [];
+                for (var item in content) {
+                    var textContent = content[item].textContent;
+                    result.push(
+                        <Row className="lead">
+                            {textContent.split('\n').map((item, key) => {
+                                return <span key={key}>{item}<br /></span>
+                            })}
+                        </Row>
+                    )
+                }
+                return result;
+            } else {
+                var dataReturn = this.getAlgo(currentLesson.algoUID);
+                console.log(dataReturn);
+                var type = dataReturn.name;
+                switch (dataReturn.url) {
+                    case 'Sort':
+                        return <Sort type={type}></Sort>;
+                        break;
+                    // add other case
+                }
+
             }
 
-            return result;
+
         }
 
         return (
@@ -196,7 +236,7 @@ class SubLesson extends React.Component {
                     <Col md={3} sm={4} xs={12}>
                         <VerticalLinearStepper contents={lessons} activeStep={order}></VerticalLinearStepper>
                     </Col>
-                    <Col mdOffset={1} md={7} sm={8} xs={12}>
+                    <Col md={9} sm={8} xs={12}>
                         <h3 className="text-center">{currentLesson.name}</h3>
                         {renderContents()}
                     </Col>

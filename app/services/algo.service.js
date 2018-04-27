@@ -1,14 +1,14 @@
-import {apiConstants} from '../constants';
+import {apiConstants} from '../constants'
 
-export const learnedCourseService = {
-    getLearnedCourses,
+export const algoService = {
+    getAlgorithm,
 };
 
 var axios = require('axios');
 
-function getLearnedCourses(userUID) {
-    var url = apiConstants.URL + 'learned/';
-    url += userUID;
+function getAlgorithm(uid) {
+    var url = apiConstants + 'algo/'
+    url += uid;
     return axios.get(url)
     .then(function(response) {
         if (response.data.length === 0) {
