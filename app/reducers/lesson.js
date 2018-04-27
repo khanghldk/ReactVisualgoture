@@ -1,10 +1,8 @@
 import { lessonConstants } from '../constants';
 
 const INITIAL_STATE = {
-    byTopicUID: ['0'],
-    byHashLessons: {
-        '0': { topicUID: '0', lessons: [] }
-    }
+    byTopicUID: [],
+    byHashLessons: {}
 }
 
 export default (state = INITIAL_STATE, action) => {

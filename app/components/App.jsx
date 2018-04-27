@@ -32,8 +32,8 @@ class App extends React.Component {
           <div className="container">
             <AppNav />
             <Route exact path='/' component={Home} />
-            <Route path='/basic-course/:courseName' component={Course} />
-            <Route path='/advanced-course/:courseName' component={Course} />       
+            <Route path='/basic-course/:courseName/:type?' component={Course} />
+            <Route path='/advanced-course/:courseName/:type?' component={Course} />       
             <Route path='/course/:courseName/:lesson/:sublesson' component={SubLesson} />
             <Route path='/algo' component={Sort} />
           </div>

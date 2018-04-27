@@ -23,12 +23,14 @@ class Course extends React.Component {
         this.state = {
             currentCourse: undefined,
             topics: [],
-            lessons: []
+            lessons: [],
+            type: ''
         }
     }
 
     componentWillMount = () => {
         var courseName = this.props.match.params.courseName;
+        var type = this.props.match.params.type;
         var { course } = this.props;
         course = course.courses;
         courseName = courseName.replace(/-/g, ' ');
@@ -46,7 +48,8 @@ class Course extends React.Component {
 
         this.setState({
             currentCourse: targetCourse,
-            topics: this.props.topic.byHashTopics[targetCourse.uid]
+            topics: this.props.topic.byHashTopics[targetCourse.uid],
+            type: type
         });
 
         var currentTopics = this.props.topic.byHashTopics[targetCourse.uid];
@@ -62,7 +65,54 @@ class Course extends React.Component {
     }
 
     render() {
-        var { currentCourse, topics, lessons } = this.state;
+        var { currentCourse, topics, lessons, type } = this.state;
+
+        var { learnedCourse } = this.props;
+        learnedCourse = learnedCourse.learnedCourses;
+        var currentLearnedCourse;
+
+        for (var i = 0; i < learnedCourse.length; i++) {
+            if (currentCourse.uid === learnedCourse[i].courseUID) {
+                currentLearnedCourse = learnedCourse[i];
+                break;
+            }
+        }
+
+        var resumeTopic, resumeLesson;
+
+        for (var item in topics) {
+            if (topics[item].order === currentLearnedCourse.currentLesson) {
+                resumeTopic = topics[item];
+                break;
+            }
+        }
+
+        let l = lessons[resumeTopic.uid];
+        for (var item in l) {
+            if (l[item].order === currentLearnedCourse.currentSubLesson) {
+                resumeLesson = l[item];
+            }
+        }
+        
+        var topicName = resumeTopic.name;
+        var lessonName = resumeLesson.name;
+
+        topicName = topicName.replace(/ /g, '-');
+        lessonName = lessonName.replace(/ /g, '-');
+
+        var resume = (type === 'resume');
+
+        var path = window.location.pathname;
+        path = path.replace(/resume/g, '');
+
+        var resumeLink = path
+            + topicName + '/'
+            + lessonName;
+
+        resumeLink = resumeLink.replace(/basic-course/g, 'course');
+        resumeLink = resumeLink.replace(/advanced-course/g, 'course');
+
+        console.log(resumeLink);
 
         var renderLessons = () => {
             var result = [];
@@ -70,8 +120,8 @@ class Course extends React.Component {
             for (var topic in topics) {
                 count++;
                 result.push(
-                    <ExpandedGroup 
-                        title={topics[topic].name} 
+                    <ExpandedGroup
+                        title={topics[topic].name}
                         data={lessons[topics[topic].uid]}>
 
                     </ExpandedGroup>
@@ -87,23 +137,29 @@ class Course extends React.Component {
             return <Redirect to='/' />
         }
 
+
         return (
             <div className="container">
-                <Row>
-                    <h1 className="text-center">{currentCourse.name}</h1>
-                </Row>
-                <Row>
-                    <Col smOffset={1} sm={10}>
-                        <Tabs defaultActiveKey={1} id="tab-course">
-                            <Tab eventKey={1} title="Overview">
-                                <h6>{currentCourse.description}</h6>
-                            </Tab>
-                            <Tab eventKey={2} title="Syllabus">
-                                {renderLessons()}
-                            </Tab>
-                        </Tabs>
-                    </Col>
-                </Row>
+                {resume && <Redirect to={resumeLink} />}
+                {!resume &&
+                    <div>
+                        <Row>
+                            <h1 className="text-center">{currentCourse.name}</h1>
+                        </Row>
+                        <Row>
+                            <Col smOffset={1} sm={10}>
+                                <Tabs defaultActiveKey={1} id="tab-course">
+                                    <Tab eventKey={1} title="Overview">
+                                        <h6>{currentCourse.description}</h6>
+                                    </Tab>
+                                    <Tab eventKey={2} title="Syllabus">
+                                        {renderLessons()}
+                                    </Tab>
+                                </Tabs>
+                            </Col>
+                        </Row>
+                    </div>
+                }
             </div>
         )
     }
@@ -114,6 +170,7 @@ export default (connect(state => ({
     topic: state.topic,
     lesson: state.lesson,
     googleAuth: state.googleAuth,
+    learnedCourse: state.learnedCourse
 }),
     {
         getTopicsByCourseUID,

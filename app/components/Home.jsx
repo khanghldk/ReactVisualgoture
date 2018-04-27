@@ -48,13 +48,15 @@ class Home extends React.Component {
                             <ListGroup>
                                 {learnedCourses.map(item => {
                                     var courseItem = getCourse(item.courseUID);
-                                    var link;
+                                    var link, resumeLink;
 
                                     if (courseItem.difficulty === 'Basic') {
                                         link = '/basic-course/' + courseItem.name.toLowerCase().replace(/ /g, '-');
                                     } else {
                                         link = '/advanced-course/' + courseItem.name.toLowerCase().replace(/ /g, '-');
                                     }
+
+                                    resumeLink = link + '/resume';
 
                                     return (
                                         <Col sm={6} md={6} key={item.uid}>
@@ -69,7 +71,12 @@ class Home extends React.Component {
 
                                                     </Row>
                                                     <Row>
-                                                        <Button bsStyle="primary"> Resume </Button>
+                                                        <Link to={resumeLink}>
+                                                            <Button bsStyle="primary">
+                                                                Resume
+                                                            </Button>
+                                                        </Link>
+
                                                     </Row>
                                                 </Col>
                                             </ListGroupItem>
