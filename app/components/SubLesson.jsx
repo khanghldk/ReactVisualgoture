@@ -14,6 +14,8 @@ import { apiConstants } from '../constants'
 
 import Sort from './Sort';
 
+import { Redirect } from 'react-router-dom';
+
 class SubLesson extends React.Component {
 
     constructor(props) {
@@ -25,7 +27,8 @@ class SubLesson extends React.Component {
             lessons: [],
             contents: [],
             order: 0,
-            total: 0
+            total: 0,
+            needRedirect: false
         }
     }
 
@@ -75,7 +78,7 @@ class SubLesson extends React.Component {
         });
 
         this.props.getContentsBySubLessonUID(currentLesson.uid);
-
+        console.log('finish mount');
     }
 
     getAlgo(uid) {
@@ -84,7 +87,6 @@ class SubLesson extends React.Component {
             url: apiConstants.URL + "algo/" + uid,
             type: "GET",
             async: false,
-            // data: JSON.stringify(uid),
             cache: false,
             contentType: "application/json; charset=utf-8",
             success: function (data) {
@@ -98,6 +100,7 @@ class SubLesson extends React.Component {
     }
 
     getNextLesson = () => {
+
         var { currentLesson, currentTopic, lessons, currentCourse, total, order } = this.state;
 
         var topics = this.props.topic.byHashTopics[currentCourse.uid];
@@ -123,7 +126,8 @@ class SubLesson extends React.Component {
             lessons: lessons,
             currentLesson: currentLesson,
             total: Object.keys(lessons).length,
-            order: 0
+            order: 0,
+            needRedirect: true
         });
 
         this.props.getContentsBySubLessonUID(currentLesson.uid);
@@ -132,8 +136,24 @@ class SubLesson extends React.Component {
 
     handleNext = (e) => {
         e.preventDefault();
+        var { order, total, currentLesson, lessons, currentCourse, currentTopic } = this.state;
+        var { googleAuth, learnedCourse } = this.props;
 
-        var { order, total, currentLesson, lessons } = this.state;
+        learnedCourse = learnedCourse.learnedCourses;
+
+        var updateLearnedCourse = false;
+
+        var currentLearnedCourse;
+
+        for (var i = 0; i < learnedCourse.length; i++) {
+            if (learnedCourse[i].courseUID === currentCourse.uid) {
+                currentLearnedCourse = learnedCourse[i];
+                updateLearnedCourse = true;
+                break;
+            }
+        }
+
+        var data;
 
         if (order < total - 1) {
             order = order + 1;
@@ -147,6 +167,25 @@ class SubLesson extends React.Component {
                 currentLesson: currentLesson,
                 order: order
             });
+
+            if (currentTopic.order > currentLearnedCourse.currentLesson) {
+                data = {
+                    userUID: googleAuth.uid,
+                    courseUID: currentCourse.uid,
+                    currentLesson: currentTopic.order,
+                    currentSubLesson: currentLesson.order
+                }
+            } else if (currentTopic.order === currentLearnedCourse.currentLesson) {
+                if (currentLesson.order > currentLearnedCourse.currentSubLesson) {
+                    data = {
+                        userUID: googleAuth.uid,
+                        courseUID: currentCourse.uid,
+                        currentLesson: currentTopic.order,
+                        currentSubLesson: currentLesson.order
+                    }
+                }
+            }
+
         } else {
             this.getNextLesson();
         }
@@ -185,13 +224,14 @@ class SubLesson extends React.Component {
 
         content = content.byHashContents[currentLesson.uid];
 
-        var nextSubLesson = null;
+        var needRedirect = false;
+        var nextTopic, nextLesson;
 
-        for (var item in lessons) {
-            if (lessons[item].order - currentLesson.order === 1) {
-                nextSubLesson = lessons[item];
-                break;
-            }
+        var linkRedirect = '/course/';
+        if (needRedirect) {
+            linkRedirect += currentCourse.name.replace(/ /g, '-') + '/';
+            linkRedirect += nextTopic.name.replace(/ /g, '-') + '/';
+            linkRedirect += nextLesson.name.replace(/ /g, '-');
         }
 
         var renderContents = () => {
@@ -225,6 +265,7 @@ class SubLesson extends React.Component {
         }
 
         return (
+
             <div>
                 <Breadcrumb>
                     <Breadcrumb.Item href='/'>
@@ -243,7 +284,14 @@ class SubLesson extends React.Component {
                 </Row>
                 <Row>
                     <Button className="pull-left" onClick={this.handlePrevious}>Previous</Button>
-                    <Button className="pull-right" onClick={this.handleNext}>Next</Button>
+                    {needRedirect &&
+                        <Button className="pull-right">
+                            <Link to={linkRedirect}>Next</Link>
+                        </Button>}
+                    {!needRedirect &&
+                        <Button className="pull-right" onClick={this.handleNext}>Next</Button>
+                    }
+
                 </Row>
             </div>
         )
@@ -255,7 +303,8 @@ export default (connect(state => ({
     topic: state.topic,
     lesson: state.lesson,
     googleAuth: state.googleAuth,
-    content: state.content
+    content: state.content,
+    learnedCourse: state.learnedCourse
 }),
     {
         getContentsBySubLessonUID,

@@ -35,8 +35,8 @@ var ExpandedGroup = createReactClass({
             var name = item.name;
             
             var path = window.location.pathname + '/' + title.replace(/ /g, '-') + '/' + name.replace(/ /g, '-');
-            path = path.replace(/basic-course/g, 'course');
-            path = path.replace(/advanced-course/g, 'course');
+            // path = path.replace(/basic-course/g, 'course');
+            // path = path.replace(/advanced-course/g, 'course');
             return (
                 <ListGroupItem key={num}>
                     <Link to={path}>

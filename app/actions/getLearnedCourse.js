@@ -19,3 +19,16 @@ export function getLearnedCourses(userUID) {
     };
 }
 
+export function updateLearnCourse(learnCourse) {
+    return async dispatch => {
+        dispatch(request());
+        learnedCourseService.updateLearnCourse(learnCourse)
+            .then(function(data) {
+                console.log('successful update learnCourse')
+                //dispatch(success(data));
+            }, function(error) {
+                dispatch(failure(error));
+            });
+    };
+}
+

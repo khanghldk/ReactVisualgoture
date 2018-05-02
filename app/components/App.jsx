@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { history } from '../helpers';
@@ -28,16 +28,18 @@ class App extends React.Component {
   render() {
     const { alert } = this.props;
     return (
-        <Router history={history}>
-          <div className="container">
-            <AppNav />
+      <Router history={history}>
+        <div className="container">
+          <AppNav />
+          <Switch>
             <Route exact path='/' component={Home} />
-            <Route path='/basic-course/:courseName/:type?' component={Course} />
-            <Route path='/advanced-course/:courseName/:type?' component={Course} />       
-            <Route path='/course/:courseName/:lesson/:sublesson' component={SubLesson} />
+            <Route path='/basic-course/:courseName/:type?' exact component={Course} />
+            <Route path='/advanced-course/:courseName/:type?' exact component={Course} />
+            <Route path='/basic-course/:courseName/:lesson/:sublesson' component={SubLesson} />
             <Route path='/algo' component={Sort} />
-          </div>
-        </Router>
+          </Switch>
+        </div>
+      </Router>
     );
   }
 }

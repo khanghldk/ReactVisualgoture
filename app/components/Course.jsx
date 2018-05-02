@@ -109,10 +109,8 @@ class Course extends React.Component {
             + topicName + '/'
             + lessonName;
 
-        resumeLink = resumeLink.replace(/basic-course/g, 'course');
-        resumeLink = resumeLink.replace(/advanced-course/g, 'course');
-
-        console.log(resumeLink);
+        // resumeLink = resumeLink.replace(/basic-course/g, 'course');
+        // resumeLink = resumeLink.replace(/advanced-course/g, 'course');
 
         var renderLessons = () => {
             var result = [];
@@ -123,11 +121,9 @@ class Course extends React.Component {
                     <ExpandedGroup
                         title={topics[topic].name}
                         data={lessons[topics[topic].uid]}>
-
                     </ExpandedGroup>
                 );
             }
-
             return result;
         }
 
