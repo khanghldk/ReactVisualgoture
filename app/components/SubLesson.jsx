@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Breadcrumb, Col, Row, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import { getContentsBySubLessonUID } from '../actions/getContents';
 import { getLessonsByTopicUID } from '../actions/getLessons';
@@ -13,8 +13,7 @@ import VerticalLinearStepper from './VerticalLinearStepper';
 import { apiConstants } from '../constants'
 
 import Sort from './Sort';
-
-import { Redirect } from 'react-router-dom';
+// import Sort from './Sort1';
 
 class SubLesson extends React.Component {
 
@@ -32,8 +31,11 @@ class SubLesson extends React.Component {
         }
     }
 
-    componentWillMount = () => {
+    componentWillReceiveProps = (nextProps) => {
+        this.props = nextProps;
+    }
 
+    componentWillMount = () => {
         var lessonName = this.props.match.params.sublesson.replace(/-/g, ' ').toLowerCase();
         var topicName = this.props.match.params.lesson.replace(/-/g, ' ').toLowerCase();
         var courseName = this.props.match.params.courseName.replace(/-/g, ' ').toLowerCase();
@@ -78,7 +80,6 @@ class SubLesson extends React.Component {
         });
 
         this.props.getContentsBySubLessonUID(currentLesson.uid);
-        console.log('finish mount');
     }
 
     getAlgo(uid) {
@@ -103,34 +104,38 @@ class SubLesson extends React.Component {
 
         var { currentLesson, currentTopic, lessons, currentCourse, total, order } = this.state;
 
+        var nextLesson, nextTopic;
+
         var topics = this.props.topic.byHashTopics[currentCourse.uid];
 
         for (var item in topics) {
             if (currentTopic.order + 1 === topics[item].order) {
-                currentTopic = topics[item];
+                nextTopic = topics[item];
                 break;
             }
         }
 
-        lessons = this.props.lesson.byHashLessons[currentTopic.uid];
+        lessons = this.props.lesson.byHashLessons[nextTopic.uid];
 
         for (var item in lessons) {
             if (lessons[item].order === 1) {
-                currentLesson = lessons[item];
+                nextLesson = lessons[item];
                 break;
             }
         }
 
         this.setState({
-            currentTopic: currentTopic,
+            nextTopic: nextTopic,
             lessons: lessons,
-            currentLesson: currentLesson,
+            nextLesson: nextLesson,
             total: Object.keys(lessons).length,
             order: 0,
             needRedirect: true
         });
 
         this.props.getContentsBySubLessonUID(currentLesson.uid);
+
+        return (<Redirect to='/' />)
 
     }
 
@@ -187,6 +192,7 @@ class SubLesson extends React.Component {
             }
 
         } else {
+            console.log('get next lesson');
             this.getNextLesson();
         }
         try {
@@ -224,15 +230,82 @@ class SubLesson extends React.Component {
 
         content = content.byHashContents[currentLesson.uid];
 
-        var needRedirect = false;
-        var nextTopic, nextLesson;
+        var nextTopic, nextLesson, preTopic, preLesson;
 
-        var linkRedirect = '/course/';
-        if (needRedirect) {
-            linkRedirect += currentCourse.name.replace(/ /g, '-') + '/';
-            linkRedirect += nextTopic.name.replace(/ /g, '-') + '/';
-            linkRedirect += nextLesson.name.replace(/ /g, '-');
+        if (order < total - 1) {
+            var nextOrder = order + 1;
+            for (var item in lessons) {
+                if ((lessons[item].order - 1) === nextOrder) {
+                    nextLesson = lessons[item];
+                    nextTopic = currentTopic;
+                    break;
+                }
+            }
+        } else {
+            var topics = this.props.topic.byHashTopics[currentCourse.uid];
+            for (var item in topics) {
+                if (currentTopic.order + 1 === topics[item].order) {
+                    nextTopic = topics[item];
+                    break;
+                }
+            }
+            if (nextTopic) {
+                var nextLessons = this.props.lesson.byHashLessons[nextTopic.uid];
+
+                for (var item in nextLessons) {
+                    if (nextLessons[item].order === 1) {
+                        nextLesson = nextLessons[item];
+                        break;
+                    }
+                }
+            } else {
+                nextTopic = currentTopic;
+                nextLesson = currentLesson;
+            }
         }
+
+        if (order > 0) {
+            var preOrder = order - 1;
+            for (var item in lessons) {
+                if ((lessons[item].order - 1) === preOrder) {
+                    preLesson = lessons[item];
+                    preTopic = currentTopic;
+                    break;
+                }
+            }
+        } else {
+            var topics = this.props.topic.byHashTopics[currentCourse.uid];
+            for (var item in topics) {
+                if (currentTopic.order - 1 === topics[item].order) {
+                    preTopic = topics[item];
+                    break;
+                }
+            }
+            if (preTopic) {
+                var preLessons = this.props.lesson.byHashLessons[preTopic.uid];
+                var preLessonOrder = 0;
+                for (var item in preLessons) {
+                    if (preLessons[item].order > preLessonOrder) {
+                        preLesson = preLessons[item];
+                        preLessonOrder = preLessons[item].order;
+                    }
+                }
+            } else {
+                preTopic = currentTopic;
+                preLesson = currentLesson;
+            }
+        }
+
+        var linkNext = '/basic-course/';
+        linkNext += currentCourse.name.replace(/ /g, '-') + '/';
+        linkNext += nextTopic.name.replace(/ /g, '-') + '/';
+        linkNext += nextLesson.name.replace(/ /g, '-');
+
+        var linkPre = '/basic-course/';
+
+        linkPre += currentCourse.name.replace(/ /g, '-') + '/';
+        linkPre += preTopic.name.replace(/ /g, '-') + '/';
+        linkPre += preLesson.name.replace(/ /g, '-');
 
         var renderContents = () => {
             if (currentLesson.type === 'text') {
@@ -250,10 +323,12 @@ class SubLesson extends React.Component {
                 return result;
             } else {
                 var dataReturn = this.getAlgo(currentLesson.algoUID);
-                console.log(dataReturn);
                 var type = dataReturn.name;
                 switch (dataReturn.url) {
                     case 'Sort':
+                        return <Sort type={type}></Sort>;
+                        break;
+                    case 'Sort1':
                         return <Sort type={type}></Sort>;
                         break;
                     // add other case
@@ -264,8 +339,8 @@ class SubLesson extends React.Component {
 
         }
 
-        return (
 
+        return (
             <div>
                 <Breadcrumb>
                     <Breadcrumb.Item href='/'>
@@ -283,18 +358,16 @@ class SubLesson extends React.Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Button className="pull-left" onClick={this.handlePrevious}>Previous</Button>
-                    {needRedirect &&
-                        <Button className="pull-right">
-                            <Link to={linkRedirect}>Next</Link>
-                        </Button>}
-                    {!needRedirect &&
-                        <Button className="pull-right" onClick={this.handleNext}>Next</Button>
-                    }
-
+                    <Button className="pull-left">
+                        <Link to={linkPre}>Previous</Link>
+                    </Button>
+                    <Button className="pull-right">
+                        <Link to={linkNext}>Next</Link>
+                    </Button>
                 </Row>
             </div>
         )
+
     }
 }
 

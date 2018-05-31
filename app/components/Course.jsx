@@ -109,9 +109,6 @@ class Course extends React.Component {
             + topicName + '/'
             + lessonName;
 
-        // resumeLink = resumeLink.replace(/basic-course/g, 'course');
-        // resumeLink = resumeLink.replace(/advanced-course/g, 'course');
-
         var renderLessons = () => {
             var result = [];
             var count = 0;

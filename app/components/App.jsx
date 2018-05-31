@@ -35,7 +35,10 @@ class App extends React.Component {
             <Route exact path='/' component={Home} />
             <Route path='/basic-course/:courseName/:type?' exact component={Course} />
             <Route path='/advanced-course/:courseName/:type?' exact component={Course} />
-            <Route path='/basic-course/:courseName/:lesson/:sublesson' component={SubLesson} />
+            {/* <Route path='/basic-course/:courseName/:lesson/:sublesson' component={SubLesson} /> */}
+            <Route path='/basic-course/:courseName/:lesson/:sublesson' component={ (props) => (
+                  <SubLesson timestamp={new Date().toString()} {...props} />
+            )}/>
             <Route path='/algo' component={Sort} />
           </Switch>
         </div>
