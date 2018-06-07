@@ -14,7 +14,7 @@ import Course from './Course';
 
 import SubLesson from './SubLesson';
 
-import Sort from './Sort';
+import Sort from './algorithms/Sort';
 
 class App extends React.Component {
   constructor(props) {

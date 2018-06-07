@@ -17,8 +17,14 @@ class BarChart extends Component {
     }
 
     createBars = () => {
+
+        var POSITION_USE_PRIMARY = "a";
+        var POSITION_USE_SECONDARY_IN_DEFAULT_POSITION = "b";
+
+        var gapBetweenPrimaryAndSecondaryRows = 10;
+
         var entry = this.props.entry;
-        console.log(entry.length);
+        // console.log(entry.length);
 
         const width = 50;
         const node = this.node;
@@ -26,14 +32,30 @@ class BarChart extends Component {
             return d.value;
         });
 
-        const ySize = this.props.size[1];
+        var ySize = this.props.size[1];
 
-        const yScale = scaleLinear()
+        const type = this.props.type;
+
+        if (type === 2) {
+            ySize = ySize/2;
+        }
+
+        var yScale = scaleLinear()
             .domain([0, dataMax])
             .range([0, ySize]);
 
         var translate = (d) => {
-            return 'translate(' + (d.position * width + 100) + ", " + (ySize - yScale(d.value)) + ')';
+            // return 'translate(' + (d.position * width + 100) + ", " + (ySize - yScale(d.value)) + ')';
+            if (d.secondaryPositionStatus == POSITION_USE_PRIMARY)
+                return 'translate(' + (d.position * width) + ", " + (ySize - yScale(d.value)) + ')';
+            else if (d.secondaryPositionStatus == POSITION_USE_SECONDARY_IN_DEFAULT_POSITION)
+                return 'translate(' + (d.position * width) + ", " + (ySize * 2 + gapBetweenPrimaryAndSecondaryRows - yScale(d.value)) + ')';
+            else if (d.secondaryPositionStatus >= 0)
+                return 'translate(' + (d.secondaryPositionStatus * width) + ", " + (ySize * 2 + gapBetweenPrimaryAndSecondaryRows - yScale(d.value)) + ')';
+            else if (d.secondaryPositionStatus < 0)
+                return 'translate(' + ((d.secondaryPositionStatus * -1 - 1) * width) + ", " + (ySize * 2 + gapBetweenPrimaryAndSecondaryRows - yScale(d.value)) + ')';
+            else
+                return 'translation(0, 0)';
         }
 
         select(node)
@@ -53,22 +75,22 @@ class BarChart extends Component {
 
         try {
             select(node)
-            .selectAll('rect')
-            .data(entry)
-            .style('fill', function (d) {
-                return d.highlight;
-            })
-            .transition()
-            .duration(500)
-            .attr('height', (d) => yScale(d.value))
-            .attr('width', width - gap)
-            .attr("transform", (d) => translate(d));
-            
+                .selectAll('rect')
+                .data(entry)
+                .style('fill', function (d) {
+                    return d.highlight;
+                })
+                .transition()
+                .duration(500)
+                .attr('height', (d) => yScale(d.value))
+                .attr('width', width - gap)
+                .attr("transform", (d) => translate(d));
+
         } catch (error) {
             console.log(error);
         }
 
-        
+
     }
 
     render() {

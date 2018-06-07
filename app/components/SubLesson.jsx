@@ -12,8 +12,8 @@ import VerticalLinearStepper from './VerticalLinearStepper';
 
 import { apiConstants } from '../constants'
 
-import Sort from './Sort';
-// import Sort from './Sort1';
+import Sort from './algorithms/Sort';
+import Sort2 from './algorithms/Sort2';
 
 class SubLesson extends React.Component {
 
@@ -329,7 +329,7 @@ class SubLesson extends React.Component {
                         return <Sort type={type}></Sort>;
                         break;
                     case 'Sort1':
-                        return <Sort type={type}></Sort>;
+                        return <Sort2 type={type}></Sort2>;
                         break;
                     // add other case
                 }

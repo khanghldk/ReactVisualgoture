@@ -3,15 +3,13 @@ import { connect } from 'react-redux';
 
 import { Col, Row } from 'react-bootstrap';
 
-// var Sorting = require('../drawers/Sorting');
-
 import { PlayArrow, Pause, SkipNext, SkipPrevious } from '@material-ui/icons';
 
-import BarChart from './BarChart';
+import BarChart from '../BarChart';
 
 import { Button } from 'react-bootstrap';
 
-import {apiConstants} from '../constants'
+import {apiConstants} from '../../constants';
 
 class Sort extends React.Component {
 
@@ -176,7 +174,7 @@ class Sort extends React.Component {
                 <Row>
                     <Col md={12}>
                         <div className="gridGraph">
-                            <BarChart entry={statelist[currentStep].entries} size={[700, 400]} />
+                            <BarChart entry={statelist[currentStep].entries} size={[700, 400]} type={1}/>
                         </div>
                     </Col>
                 </Row>
