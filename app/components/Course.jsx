@@ -1,13 +1,7 @@
 import React from 'react';
 
-import { Route } from 'react-router-dom';
-
-import { history } from '../helpers';
-
 import { connect } from 'react-redux';
-import { Tab, Tabs, Breadcrumb, Col, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-var SideNav = require('SideNav');
+import { Tab, Tabs, Col, Row } from 'react-bootstrap';
 
 var ExpandedGroup = require('ExpandedGroup');
 
@@ -15,7 +9,8 @@ import { Redirect } from 'react-router-dom';
 
 import { getTopicsByCourseUID } from '../actions/getTopics';
 import { getLessonsByTopicUID } from '../actions/getLessons';
-import SubLesson from './SubLesson';
+
+import ErrorUnauthenticated from './ErrorUnauthenticated';
 
 class Course extends React.Component {
     constructor(props) {
@@ -67,6 +62,14 @@ class Course extends React.Component {
     render() {
         var { currentCourse, topics, lessons, type } = this.state;
 
+        const { googleAuth } = this.props;
+
+        if (!googleAuth.loggedIn) {
+            return <ErrorUnauthenticated/>
+        }
+
+        const resume = (type === 'resume');
+
         var { learnedCourse } = this.props;
         learnedCourse = learnedCourse.learnedCourses;
         var currentLearnedCourse;
@@ -100,8 +103,6 @@ class Course extends React.Component {
         topicName = topicName.replace(/ /g, '-');
         lessonName = lessonName.replace(/ /g, '-');
 
-        var resume = (type === 'resume');
-
         var path = window.location.pathname;
         path = path.replace(/resume/g, '');
 
@@ -123,13 +124,6 @@ class Course extends React.Component {
             }
             return result;
         }
-
-        const { googleAuth } = this.props;
-
-        if (!googleAuth.loggedIn) {
-            return <Redirect to='/' />
-        }
-
 
         return (
             <div className="container">

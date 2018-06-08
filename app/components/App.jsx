@@ -8,13 +8,11 @@ import { alertActions } from '../actions';
 import Home from './Home';
 import AppNav from './AppNav';
 
-import MenuAppBar from './MenuAppBar';
-
 import Course from './Course';
 
 import SubLesson from './SubLesson';
 
-import Sort from './algorithms/Sort';
+import ErrorPage from './ErrorPage';
 
 class App extends React.Component {
   constructor(props) {
@@ -35,11 +33,12 @@ class App extends React.Component {
             <Route exact path='/' component={Home} />
             <Route path='/basic-course/:courseName/:type?' exact component={Course} />
             <Route path='/advanced-course/:courseName/:type?' exact component={Course} />
-            {/* <Route path='/basic-course/:courseName/:lesson/:sublesson' component={SubLesson} /> */}
             <Route path='/basic-course/:courseName/:lesson/:sublesson' component={ (props) => (
                   <SubLesson timestamp={new Date().toString()} {...props} />
             )}/>
-            <Route path='/algo' component={Sort} />
+            <Route component={(props) => (
+                  <ErrorPage message={'The page you are looking for could not be found!'} {...props}/>
+            )}/>
           </Switch>
         </div>
       </Router>

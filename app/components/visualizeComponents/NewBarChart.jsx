@@ -36,10 +36,8 @@ class BarChart extends Component {
 
         const type = this.props.type;
 
-        var gap = 5;
-
         if (type === 2) {
-            ySize = (ySize-10) / 2;
+            ySize = ySize / 2;
         }
 
         var yScale = scaleLinear()
@@ -47,6 +45,7 @@ class BarChart extends Component {
             .range([0, ySize]);
 
         var translate = (d) => {
+            // return 'translate(' + (d.position * width + 100) + ", " + (ySize - yScale(d.value)) + ')';
             if (d.secondaryPositionStatus == POSITION_USE_PRIMARY)
                 return 'translate(' + (d.position * width) + ", " + (ySize - yScale(d.value)) + ')';
             else if (d.secondaryPositionStatus == POSITION_USE_SECONDARY_IN_DEFAULT_POSITION)
@@ -59,25 +58,15 @@ class BarChart extends Component {
                 return 'translation(0, 0)';
         }
 
-        var text_y = function (d) {
-            var barHeight = yScale(d.value);
-            if (barHeight < 32) return -15;
-            return barHeight - 15;
-        }
-
-        var translateText = (d) => {
-            const barHeight = ySize - 20;
-            const barHeight2 = ySize * 2 + gapBetweenPrimaryAndSecondaryRows - 20;
-            const mid = 15;
-
+        var translateCircle = (d) => {
             if (d.secondaryPositionStatus == POSITION_USE_PRIMARY)
-                return 'translate(' + (d.position * width + mid) + ", " + barHeight + ')';
+                return 'translate(' + ((d.position+1) * width) + ", " + ySize + ')';
             else if (d.secondaryPositionStatus == POSITION_USE_SECONDARY_IN_DEFAULT_POSITION)
-                return 'translate(' + (d.position * width + mid) + ", " + barHeight2 + ')';
+                return 'translate(' + ((d.position+1) * width) + ", " + ySize + ')';
             else if (d.secondaryPositionStatus >= 0)
-                return 'translate(' + (d.secondaryPositionStatus * width + mid) + ", " + barHeight + ')';
+                return 'translate(' + ((d.secondaryPositionStatus+1) * width) + ", " + ySize + ')';
             else if (d.secondaryPositionStatus < 0)
-                return 'translate(' + ((d.secondaryPositionStatus * -1 - 1) * width + mid) + ", " + barHeight + ')';
+                return 'translate(' + ((d.secondaryPositionStatus * -1 - 1 + 1) * width) + ", " + ySize + ')';
             else
                 return 'translation(0, 0)';
         }
@@ -89,15 +78,11 @@ class BarChart extends Component {
             .append('rect');
 
         select(node)
-            .selectAll('text')
+            .selectAll('circle')
             .data(entry)
             .enter()
-            .append('text')
-            .attr("dy", ".35em")
-            .text(function (d) {
-                return d.value;
-            });
-
+            .append('circle')
+            .append('text');
 
         select(node)
             .selectAll('rect')
@@ -106,10 +91,12 @@ class BarChart extends Component {
             .remove();
 
         select(node)
-            .selectAll('text')
+            .selectAll('circle')
             .data(entry)
             .exit()
             .remove();
+
+        var gap = 5;
 
         try {
             select(node)
@@ -125,14 +112,15 @@ class BarChart extends Component {
                 .attr("transform", (d) => translate(d));
 
             select(node)
-                .selectAll('text')
+                .selectAll('circle')
                 .data(entry)
-                .transition()
-                .duration(500)
-                .text(function (d) {
-                    return d.value;
+                .style('fill', function (d) {
+                    return 'red'
                 })
-                .attr("transform", (d) => translateText(d));
+                .attr('cx', 0)
+                .attr('cy', 0)
+                .attr('r', 10)
+                .attr("transform", (d) => translateCircle(d)); 
 
         } catch (error) {
             console.log(error);
