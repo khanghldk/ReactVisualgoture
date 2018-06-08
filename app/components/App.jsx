@@ -14,6 +14,12 @@ import SubLesson from './SubLesson';
 
 import ErrorPage from './ErrorPage';
 
+import UserManagement from './UserManagement';
+
+import EnhancedTable from './EnhancedTable';
+
+import EditableCourse from './EditableCourse';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -35,6 +41,10 @@ class App extends React.Component {
             <Route path='/advanced-course/:courseName/:type?' exact component={Course} />
             <Route path='/basic-course/:courseName/:lesson/:sublesson' component={ (props) => (
                   <SubLesson timestamp={new Date().toString()} {...props} />
+            )}/>
+            <Route exact path='/manageUsers' component={UserManagement}/>
+            <Route path='/edit-course/:uid' exact component={ (props) => (
+                  <EditableCourse timestamp={new Date().toString()} {...props} />
             )}/>
             <Route component={(props) => (
                   <ErrorPage message={'The page you are looking for could not be found!'} {...props}/>

@@ -6,6 +6,8 @@ import topic from './topic';
 import lesson from './lesson';
 import content from './content';
 import learnedCourse from './learnedCourse';
+import user from './user';
+import courseByUID from './courseByUID';
 
 export default {
   alert,
@@ -15,5 +17,7 @@ export default {
   topic,
   lesson,
   content,
-  learnedCourse
+  learnedCourse,
+  user,
+  courseByUID
 };

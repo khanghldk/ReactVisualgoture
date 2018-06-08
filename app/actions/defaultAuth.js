@@ -1,10 +1,7 @@
 import { userConstants } from '../constants';
-import { alertActions } from './';
 import { history } from '../helpers';
 
 import { userService } from '../services';
-
-import { firebaseAuth, googleProvider } from '../database/config';
 
 require('babel-polyfill');
 

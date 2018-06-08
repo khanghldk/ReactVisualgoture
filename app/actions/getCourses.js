@@ -1,6 +1,4 @@
 import { courseConstants } from '../constants';
-import { alertActions } from './';
-import { history } from '../helpers';
 
 import { courseService } from '../services';
 
@@ -20,5 +18,21 @@ export function getAll() {
                 dispatch(failure(error));
             });
     };
+}
+
+const requestUID = () => ({ type: courseConstants.COURSE_BYUID_REQUEST });
+const successUID = payload => ({ type: courseConstants.COURSE_BYUID_SUCCESS, payload });
+const failureUID = error => ({ type: courseConstants.COURSE_BYUID_ERROR, error });
+
+export function getByUID(uid) {
+    return async dispatch => {
+        dispatch(requestUID());
+        courseService.getByUID(uid)
+            .then(function(data) {
+                dispatch(successUID(data));
+            }, function(error) {
+                dispatch(failureUID(error));
+            });
+    }
 }
 

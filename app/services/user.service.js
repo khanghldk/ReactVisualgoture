@@ -1,10 +1,11 @@
-import {apiConstants} from '../constants';
+import { apiConstants } from '../constants';
 
 export const userService = {
     login,
     signup,
     logout,
     createUser,
+    getAllUsers
 };
 
 var axios = require('axios');
@@ -55,4 +56,18 @@ function createUser(accountUID, displayName, role) {
 function logout() {
     // remove user from local storage to log user out
     localStorage.removeItem('user');
+}
+
+function getAllUsers() {
+    var url = apiConstants.URL + 'create';
+    return axios.get(url)
+        .then(function (response) {
+            if (response.data.length === 0) {
+                throw new Error('No user');
+            } else {
+                return response.data;
+            }
+        }, function (error) {
+            throw new Error('Something went wrong');
+        })
 }

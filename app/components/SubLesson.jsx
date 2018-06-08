@@ -6,8 +6,6 @@ import { Link, Redirect } from 'react-router-dom';
 import { getContentsBySubLessonUID } from '../actions/getContents';
 import { getLessonsByTopicUID } from '../actions/getLessons';
 
-import { Stepper } from 'material-ui';
-
 import VerticalLinearStepper from './VerticalLinearStepper';
 
 import { apiConstants } from '../constants'
